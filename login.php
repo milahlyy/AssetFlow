@@ -62,16 +62,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login AssetFlow</title>
+    <link rel="stylesheet" href="css/login.css">
 </head>
 <body>
-    <h2>Login AssetFlow</h2>
 
-    <form method="POST">
-        <input type="email" name="email" placeholder="Email" required><br><br>
-        <input type="password" name="password" placeholder="Password" required><br><br>
-        <button type="submit" name="login">Masuk</button>
-    </form>
+<div class="left-panel">
+    <h1>
+        Asset<br>
+        Flow
+    </h1>
+</div>
+
+<div class="right-panel">
+    <div class="login-box">
+        <h2>Selamat Datang</h2>
+        <p>Silahkan masuk terlebih dahulu</p>
+
+        <?php if (!empty($error)): ?>
+            <div class="error"><?= $error ?></div>
+        <?php endif; ?>
+
+        <form method="POST">
+            <label>Email</label>
+            <input type="email" name="email" required>
+            <label>Kata Sandi</label>
+            <input type="password" name="password" required>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+</div>
 </body>
 </html>
