@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <p>Silahkan masuk terlebih dahulu</p>
 
         <?php if (!empty($error)): ?>
-            <div class="error"><?= $error ?></div>
+            <div class="error"><?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
 
         <form method="POST">
