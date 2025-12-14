@@ -21,7 +21,7 @@ CREATE TABLE `users` (
 
 --
 -- Dumping data for table `users` (Default Accounts)
--- Password defaults: '12345' (Hashed with password_hash)
+-- Password defaults: 'password' (Hashed with password_hash)
 --
 
 INSERT INTO `users` (`id_user`, `nama`, `email`, `password`, `role`, `divisi`) VALUES
