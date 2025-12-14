@@ -18,10 +18,13 @@ $error = '';
 
 //3. proses login jika user belum login dan menekan tombol login
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = $_POST['email'];
+    $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
     $password = $_POST['password'];
 
-    if (empty($email) || empty($password)) {
+    // Validasi format email
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = "Format email tidak valid.";
+    } elseif (empty($email) || empty($password)) {
         $error = "Email dan Password harus diisi.";
     } else {
         // Mencari user di database berdasarkan email
@@ -32,11 +35,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $user = $stmt->fetch();
 
             if ($user && password_verify($password, $user['password'])) {
+                // Regenerate session ID untuk mencegah session fixation
+                session_regenerate_id(true);
+                
                 // Login berhasil, simpan data user di session
                 $_SESSION['user_id'] = $user['id_user'];
                 $_SESSION['nama'] = $user['nama'];
                 $_SESSION['role'] = $user['role'];
                 $_SESSION['divisi'] = $user['divisi'];
+                $_SESSION['last_activity'] = time(); // Set waktu aktivitas untuk timeout
 
                 // Arahkan ke dashboard sesuai role
                 if ($user['role'] === 'hrga'){
@@ -51,7 +58,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $error = "Email atau Password salah.";
             }
         } catch (PDOException $e) {
-            $error = "Terjadi kesalahan pada server: " . $e->getMessage();
+            // Log error ke file log (jangan tampilkan ke user)
+            error_log("Login error: " . $e->getMessage());
+            $error = "Email atau Password salah.";
         }
     } 
 }
