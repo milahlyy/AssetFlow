@@ -1,0 +1,255 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Tahoma, sans-serif;
+}
+
+body {
+    background-color: #F4F6F8;
+    color: #0A192F;
+}
+
+/* SIDEBAR */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100vh;
+    background: linear-gradient(180deg, #0A192F, #071326);
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+.sidebar h2 {
+    color: #64FFDA;
+    font-size: 32px;
+    text-align: center;
+    margin-bottom: 40px;
+    letter-spacing: 2px;
+}
+
+.sidebar a {
+    color: #FFFFFF;
+    text-decoration: none;
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    font-size: 15px;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidebar a:hover {
+    background-color: #1C2A44;
+    transform: translateX(5px);
+}
+
+.sidebar .logout {
+    margin-top: auto;
+    border: 1px solid #FF8C00;
+    color: #FF8C00;
+    text-align: center;
+}
+
+.sidebar .logout:hover {
+    background-color: #FF8C00;
+    color: #FFFFFF;
+}
+/* ========================
+   3. MAIN CONTENT
+======================== */
+.main-content {
+    margin-left: 260px;
+    padding: 40px;
+}
+
+/* Header Text */
+h1 {
+    color: #64FFDA;
+    background-color: #0A192F;
+    padding: 20px 30px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    font-size: 26px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+h2 {
+    font-size: 20px;
+    color: #0A192F;
+    margin-bottom: 20px;
+    margin-top: 10px;
+    border-bottom: 2px solid #E2E8F0;
+    padding-bottom: 10px;
+    display: inline-block;
+}
+
+/* Pesan Notifikasi PHP */
+p {
+    margin-bottom: 15px;
+}
+
+/* ========================
+   4. FORM STYLING (Tambah/Edit)
+======================== */
+form {
+    background: #FFFFFF;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    max-width: 600px; /* Agar form tidak terlalu lebar */
+    margin-bottom: 40px;
+}
+
+form input[type="text"],
+form select,
+form input[type="file"] {
+    width: 100%;
+    padding: 10px 15px;
+    margin: 8px 0 20px 0;
+    display: inline-block;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 14px;
+    background-color: #F8FAFC;
+}
+
+form input:focus,
+form select:focus {
+    outline: none;
+    border-color: #64FFDA;
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(100, 255, 218, 0.2);
+}
+
+form button {
+    background-color: #0A192F;
+    color: #64FFDA;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+form button:hover {
+    background-color: #1C2A44;
+}
+
+/* Tombol Batal di Modal */
+form button[type="button"] {
+    background-color: #E2E8F0;
+    color: #475569;
+    margin-left: 10px;
+}
+
+form button[type="button"]:hover {
+    background-color: #CBD5E1;
+}
+
+/* ========================
+   5. TABLE STYLING (Daftar Aset)
+======================== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #FFFFFF;
+    border-radius: 15px;
+    overflow: hidden; /* Biar sudut rounded table kelihatan */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    margin-top: 10px;
+}
+
+table th {
+    background-color: #0A192F;
+    color: #FFFFFF;
+    text-align: left;
+    padding: 15px 20px;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+table td {
+    padding: 15px 20px;
+    border-bottom: 1px solid #F1F5F9;
+    color: #334155;
+    vertical-align: middle;
+}
+
+table tr:hover {
+    background-color: #F8FAFC;
+}
+
+table img {
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid #E2E8F0;
+}
+
+/* Tombol Aksi di Tabel */
+table button, 
+table a {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    margin-right: 5px;
+    transition: 0.2s;
+}
+
+/* Tombol Edit */
+table button {
+    background-color: #FFC107; /* Kuning */
+    color: #000;
+}
+table button:hover { background-color: #e0a800; }
+
+/* Tombol Hapus */
+table a {
+    background-color: #DC3545; /* Merah */
+    color: #fff;
+}
+table a:hover { background-color: #bb2d3b; }
+
+/* ========================
+   6. MODAL EDIT (Override Style Inline)
+======================== */
+#editForm {
+    /* Style dasar sudah ada di inline HTML PHP, 
+       tapi kita percantik border & shadownya lewat CSS */
+    border-radius: 15px !important;
+    border: none !important;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3) !important;
+    z-index: 2000 !important; /* Di atas sidebar */
+    width: 500px;
+    max-width: 90%;
+}
+
+/* Overlay gelap di belakang modal (opsional, perlu JS tambahan sebenarnya) */
+
+/* Hilangkan garis HR */
+hr {
+    border: 0;
+    border-top: 1px solid #E2E8F0;
+    margin: 40px 0;
+}
+
+/* Responsif */
+@media (max-width: 768px) {
+    .sidebar { display: none; }
+    .main-content { margin-left: 0; }
+    table { display: block; overflow-x: auto; }
+}

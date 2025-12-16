@@ -26,136 +26,139 @@ $recent_pending = $conn->query("
 <html>
 <head>
     <title>Dashboard HRGA</title>
+    <link rel="stylesheet" href="css/admindash.css">
 </head>
 <body>
-    <h1>Dashboard HRGA</h1>
-    <p>Selamat datang, <?= htmlspecialchars($_SESSION['nama']) ?> (<?= $_SESSION['role'] ?>)</p>
     
-    <hr>
-    
-    <!-- Statistics -->
-    <h2>Statistik</h2>
-    <table border="1" cellpadding="10">
-        <tr>
-            <td><strong>Total Aset</strong></td>
-            <td><?= $total_assets ?></td>
-            <td><a href="kelola_aset.php">Lihat</a></td>
-        </tr>
-        <tr>
-            <td><strong>Total Peminjaman</strong></td>
-            <td><?= $total_loans ?></td>
-            <td><a href="laporan.php">Lihat</a></td>
-        </tr>
-        <tr>
-            <td><strong>Pending Approval</strong></td>
-            <td><?= $pending_loans ?></td>
-            <td><a href="persetujuan.php">Review</a></td>
-        </tr>
-        <tr>
-            <td><strong>Sedang Dipinjam</strong></td>
-            <td><?= $active_loans ?></td>
-            <td><a href="laporan.php?status=approved">Lihat</a></td>
-        </tr>
-    </table>
-    
-    <hr>
-    
-    <!-- Quick Actions -->
-    <h2>Quick Actions</h2>
-    <p>
-        <a href="kelola_aset.php">Kelola Aset</a> | 
-        <a href="persetujuan.php">Persetujuan Peminjaman</a> | 
-        <a href="laporan.php">Laporan</a> | 
+    <div class="sidebar">
+        <h2>HRGA</h2>
+        <a href="admin_dashboard.php" class="active">Dashboard</a>
+        <a href="kelola_aset.php">Kelola Aset</a>
+        <a href="persetujuan.php">Persetujuan Peminjaman</a>
+        <a href="laporan.php">Laporan</a>
         <a href="kelola_user.php">Kelola User</a>
-    </p>
-    
-    <hr>
-    
-    <!-- Recent Pending -->
-    <h2>Permohonan Menunggu (<?= $pending_loans ?>)</h2>
-    <?php if(empty($recent_pending)): ?>
-        <p>Tidak ada permohonan pending</p>
-    <?php else: ?>
-        <table border="1" cellpadding="10">
-            <tr>
-                <th>No</th>
-                <th>Tanggal</th>
-                <th>Pemohon</th>
-                <th>Aset</th>
-                <th>Aksi</th>
-            </tr>
-            <?php foreach($recent_pending as $index => $p): ?>
-            <tr>
-                <td><?= $index+1 ?></td>
-                <td><?= date('d/m/Y', strtotime($p['tgl_pinjam'])) ?></td>
-                <td><?= htmlspecialchars($p['pemohon']) ?></td>
-                <td><?= htmlspecialchars($p['nama_aset']) ?></td>
-                <td><a href="persetujuan.php">Review</a></td>
-            </tr>
-            <?php endforeach; ?>
-        </table>
-        <?php if($pending_loans > 5): ?>
-            <p><a href="persetujuan.php">Lihat semua (<?= $pending_loans ?> permohonan)</a></p>
-        <?php endif; ?>
-    <?php endif; ?>
-    
-    <hr>
-    
-    <!-- Recent Activities -->
-    <h2>Aktivitas Terbaru</h2>
-    <?php
-    $recent_activities = $conn->query("
-        SELECT l.*, u.nama as pemohon, a.nama_aset 
-        FROM loans l 
-        JOIN users u ON l.id_user = u.id_user 
-        JOIN assets a ON l.id_aset = a.id_aset 
-        WHERE l.status_loan != 'pending' 
-        ORDER BY l.tgl_pinjam DESC 
-        LIMIT 10
-    ")->fetchAll();
-    ?>
-    
-    <?php if(empty($recent_activities)): ?>
-        <p>Tidak ada aktivitas</p>
-    <?php else: ?>
-        <table border="1" cellpadding="10">
-            <tr>
-                <th>Tanggal</th>
-                <th>Pemohon</th>
-                <th>Aset</th>
-                <th>Status</th>
-            </tr>
-            <?php foreach($recent_activities as $a): ?>
-            <tr>
-                <td><?= date('d/m/Y', strtotime($a['tgl_pinjam'])) ?></td>
-                <td><?= htmlspecialchars($a['pemohon']) ?></td>
-                <td><?= htmlspecialchars($a['nama_aset']) ?></td>
-                <td><?= $a['status_loan'] ?></td>
-            </tr>
-            <?php endforeach; ?>
-        </table>
-        <p><a href="laporan.php">Lihat semua aktivitas</a></p>
-    <?php endif; ?>
-    
-    <hr>
-    
-    <!-- Asset Status -->
-    <h2>Status Aset</h2>
-    <?php
-    $asset_status = $conn->query("SELECT status_aset, COUNT(*) as jumlah FROM assets GROUP BY status_aset")->fetchAll();
-    ?>
-    <table border="1" cellpadding="10">
-        <tr><th>Status</th><th>Jumlah</th></tr>
-        <?php foreach($asset_status as $status): ?>
-        <tr>
-            <td><?= $status['status_aset'] ?></td>
-            <td><?= $status['jumlah'] ?></td>
-        </tr>
-        <?php endforeach; ?>
-    </table>
-    
-    <hr>
-    
-    <p><a href="logout.php">Logout</a></p>
+        <a href="logout.php" class="logout">Logout</a>
+    </div>
+
+    <div class="main-content">
+        <h1>Dashboard HRGA</h1>
+        <p class="welcome">Selamat datang, <b><?= htmlspecialchars($_SESSION['nama']) ?></b> (<?= $_SESSION['role'] ?>)</p>
+        
+        <h2>Statistik</h2>
+        <div class="stats-grid">
+            <div class="card">
+                <span class="label">Total Aset</span>
+                <span class="number"><?= $total_assets ?></span>
+                <a href="kelola_aset.php" class="btn-small">Lihat</a>
+            </div>
+            <div class="card">
+                <span class="label">Total Peminjaman</span>
+                <span class="number"><?= $total_loans ?></span>
+                <a href="laporan.php" class="btn-small">Lihat</a>
+            </div>
+            <div class="card">
+                <span class="label">Pending Approval</span>
+                <span class="number"><?= $pending_loans ?></span>
+                <a href="persetujuan.php" class="btn-small">Review</a>
+            </div>
+            <div class="card">
+                <span class="label">Sedang Dipinjam</span>
+                <span class="number"><?= $active_loans ?></span>
+                <a href="laporan.php?status=approved" class="btn-small">Lihat</a>
+            </div>
+        </div>
+        
+        <h2>Quick Actions</h2>
+        <div class="quick-actions">
+            <a href="kelola_aset.php" class="btn-blue">Kelola Aset</a>
+            <a href="persetujuan.php" class="btn-yellow">Persetujuan Peminjaman</a>
+            <a href="laporan.php" class="btn-green">Laporan</a>
+            <a href="kelola_user.php" class="btn-cyan">Kelola User</a>
+        </div>
+        
+        <div class="row-container">
+            
+            <div class="box-container">
+                <h2>Permohonan Menunggu (<?= $pending_loans ?>)</h2>
+                <?php if(empty($recent_pending)): ?>
+                    <p class="empty">Tidak ada permohonan pending</p>
+                <?php else: ?>
+                    <table class="simple-table">
+                        <tr>
+                            <th>Tgl</th>
+                            <th>Pemohon</th>
+                            <th>Aset</th>
+                            <th>Aksi</th>
+                        </tr>
+                        <?php foreach($recent_pending as $index => $p): ?>
+                        <tr>
+                            <td><?= date('d/m', strtotime($p['tgl_pinjam'])) ?></td>
+                            <td><?= htmlspecialchars($p['pemohon']) ?></td>
+                            <td><?= htmlspecialchars($p['nama_aset']) ?></td>
+                            <td><a href="persetujuan.php" class="btn-action">Cek</a></td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </table>
+                    <?php if($pending_loans > 5): ?>
+                        <div class="see-more"><a href="persetujuan.php">Lihat semua &rarr;</a></div>
+                    <?php endif; ?>
+                <?php endif; ?>
+            </div>
+
+            <div class="box-container">
+                <h2>Aktivitas Terbaru</h2>
+                <?php
+                // Query asli kamu tidak saya ubah
+                $recent_activities = $conn->query("
+                    SELECT l.*, u.nama as pemohon, a.nama_aset 
+                    FROM loans l 
+                    JOIN users u ON l.id_user = u.id_user 
+                    JOIN assets a ON l.id_aset = a.id_aset 
+                    WHERE l.status_loan != 'pending' 
+                    ORDER BY l.tgl_pinjam DESC 
+                    LIMIT 10
+                ")->fetchAll();
+                ?>
+                
+                <?php if(empty($recent_activities)): ?>
+                    <p class="empty">Tidak ada aktivitas</p>
+                <?php else: ?>
+                    <table class="simple-table">
+                        <tr>
+                            <th>Tgl</th>
+                            <th>User</th>
+                            <th>Aset</th>
+                            <th>Status</th>
+                        </tr>
+                        <?php foreach($recent_activities as $a): ?>
+                        <tr>
+                            <td><?= date('d/m', strtotime($a['tgl_pinjam'])) ?></td>
+                            <td><?= htmlspecialchars($a['pemohon']) ?></td>
+                            <td><?= htmlspecialchars($a['nama_aset']) ?></td>
+                            <td><span class="badge <?= $a['status_loan'] ?>"><?= $a['status_loan'] ?></span></td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </table>
+                    <div class="see-more"><a href="laporan.php">Lihat semua &rarr;</a></div>
+                <?php endif; ?>
+            </div>
+
+        </div> <div class="box-container full-width">
+            <h2>Status Aset</h2>
+            <?php
+            $asset_status = $conn->query("SELECT status_aset, COUNT(*) as jumlah FROM assets GROUP BY status_aset")->fetchAll();
+            ?>
+            <table class="simple-table">
+                <tr><th>Status</th><th>Jumlah</th></tr>
+                <?php foreach($asset_status as $status): ?>
+                <tr>
+                    <td><?= $status['status_aset'] ?></td>
+                    <td><b><?= $status['jumlah'] ?></b></td>
+                </tr>
+                <?php endforeach; ?>
+            </table>
+        </div>
+
+    </div>
 </body>
 </html>

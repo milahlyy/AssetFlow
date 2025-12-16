@@ -62,99 +62,141 @@ $assets = $conn->query("SELECT * FROM assets ORDER BY id_aset DESC")->fetchAll()
 <html>
 <head>
     <title>Kelola Aset</title>
+    <link rel="stylesheet" href="css/kelola_aset.css">
 </head>
 <body>
-    <h1>Kelola Aset</h1>
-    
-    <?php if(isset($message)) echo "<p>$message</p>"; ?>
-    
-    <!-- Form Tambah Aset -->
-    <h2>Tambah Aset Baru</h2>
-    <form method="POST" enctype="multipart/form-data">
-        Nama Aset: <input type="text" name="nama_aset" required><br>
-        Kategori: 
-        <select name="kategori" required>
-            <option value="mobil">Mobil</option>
-            <option value="elektronik">Elektronik</option>
-        </select><br>
-        Plat Nomor: <input type="text" name="plat_nomor"><br>
-        Status: 
-        <select name="status_aset" required>
-            <option value="tersedia">Tersedia</option>
-            <option value="maintenance">Maintenance</option>
-            <option value="rusak">Rusak</option>
-        </select><br>
-        Gambar: <input type="file" name="gambar"><br>
-        <button type="submit" name="tambah_aset">Tambah Aset</button>
-    </form>
-    
-    <hr>
-    
-    <!-- Daftar Aset -->
-    <h2>Daftar Aset</h2>
-    <table border="1" cellpadding="10">
-        <tr>
-            <th>No</th>
-            <th>Gambar</th>
-            <th>Nama Aset</th>
-            <th>Kategori</th>
-            <th>Plat</th>
-            <th>Status</th>
-            <th>Aksi</th>
-        </tr>
+
+    <div class="sidebar">
+        <h2>HRGA</h2>
+        <a href="admin_dashboard.php">Dashboard</a>
+        <a href="kelola_aset.php">Kelola Aset</a>
+        <a href="persetujuan.php">Persetujuan Peminjaman</a>
+        <a href="laporan.php">Laporan</a>
+        <a href="kelola_user.php">Kelola User</a>
+        <a href="logout.php" class="logout">Logout</a>
+    </div>
+    <div class="main-content">
+
+        <h1>Kelola Aset</h1>
         
-        <?php foreach($assets as $index => $asset): ?>
-        <tr>
-            <td><?= $index+1 ?></td>
-            <td>
-                <?php if($asset['gambar']): ?>
-                    <img src="assets/img/<?= $asset['gambar'] ?>" width="100">
-                <?php else: ?>
-                    -
-                <?php endif; ?>
-            </td>
-            <td><?= htmlspecialchars($asset['nama_aset']) ?></td>
-            <td><?= $asset['kategori'] ?></td>
-            <td><?= $asset['plat_nomor'] ?: '-' ?></td>
-            <td><?= $asset['status_aset'] ?></td>
-            <td>
-                <button onclick="editAset(<?= $asset['id_aset'] ?>)">Edit</button>
-                <a href="?delete=<?= $asset['id_aset'] ?>" onclick="return confirm('Yakin?')">Hapus</a>
-            </td>
-        </tr>
-        <?php endforeach; ?>
-    </table>
-    
-    <!-- Form Edit (Modal) -->
-    <div id="editForm" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; border:1px solid #000;">
-        <h2>Edit Aset</h2>
-        <form method="POST" enctype="multipart/form-data" id="editFormContent">
-            <input type="hidden" name="id_aset" id="edit_id">
-            Nama Aset: <input type="text" name="nama_aset" id="edit_nama" required><br>
-            Kategori: 
-            <select name="kategori" id="edit_kategori" required>
+        <?php if(isset($message)) echo "<p style='color:green; font-weight:bold;'>$message</p>"; ?>
+        
+        <h2>Tambah Aset Baru</h2>
+        <form method="POST" enctype="multipart/form-data">
+            <label>Nama Aset:</label> 
+            <input type="text" name="nama_aset" required>
+            
+            <label>Kategori:</label> 
+            <select name="kategori" required>
                 <option value="mobil">Mobil</option>
                 <option value="elektronik">Elektronik</option>
-            </select><br>
-            Plat Nomor: <input type="text" name="plat_nomor" id="edit_plat"><br>
-            Status: 
-            <select name="status_aset" id="edit_status" required>
+            </select>
+            
+            <label>Plat Nomor:</label> 
+            <input type="text" name="plat_nomor">
+            
+            <label>Status:</label> 
+            <select name="status_aset" required>
                 <option value="tersedia">Tersedia</option>
                 <option value="maintenance">Maintenance</option>
                 <option value="rusak">Rusak</option>
-            </select><br>
-            Gambar Baru: <input type="file" name="gambar"><br>
-            <button type="submit" name="update_aset">Update</button>
-            <button type="button" onclick="document.getElementById('editForm').style.display='none'">Batal</button>
+            </select>
+            
+            <label>Gambar:</label> 
+            <input type="file" name="gambar">
+            
+            <button type="submit" name="tambah_aset">Tambah Aset</button>
         </form>
-    </div>
-    
-    <script>
-    function editAset(id) {
-        // Fetch data via AJAX atau ambil dari data yang sudah ada
-        // Ini contoh sederhana, sebaiknya pakai AJAX
+        
+        <hr>
+        
+        <h2>Daftar Aset</h2>
+        <table cellpadding="10">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Gambar</th>
+                    <th>Nama Aset</th>
+                    <th>Kategori</th>
+                    <th>Plat</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach($assets as $index => $asset): ?>
+                <tr>
+                    <td><?= $index+1 ?></td>
+                    <td>
+                        <?php if($asset['gambar']): ?>
+                            <img src="assets/img/<?= $asset['gambar'] ?>" width="100">
+                        <?php else: ?>
+                            -
+                        <?php endif; ?>
+                    </td>
+                    <td><?= htmlspecialchars($asset['nama_aset']) ?></td>
+                    <td><?= $asset['kategori'] ?></td>
+                    <td><?= $asset['plat_nomor'] ?: '-' ?></td>
+                    <td><?= $asset['status_aset'] ?></td>
+                    <td>
+                        <button onclick="editAset(
+                            <?= $asset['id_aset'] ?>, 
+                            '<?= htmlspecialchars($asset['nama_aset'], ENT_QUOTES) ?>', 
+                            '<?= $asset['kategori'] ?>', 
+                            '<?= $asset['plat_nomor'] ?>', 
+                            '<?= $asset['status_aset'] ?>'
+                        )">Edit</button>
+                        <a href="?delete=<?= $asset['id_aset'] ?>" onclick="return confirm('Yakin?')">Hapus</a>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+        
+        <div id="editForm" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; border:1px solid #000;">
+            <h2 style="border:none; margin-bottom:10px;">Edit Aset</h2>
+            <form method="POST" enctype="multipart/form-data" id="editFormContent" style="box-shadow:none; padding:0; margin:0;">
+                <input type="hidden" name="id_aset" id="edit_id">
+                
+                <label>Nama Aset:</label>
+                <input type="text" name="nama_aset" id="edit_nama" required>
+                
+                <label>Kategori:</label> 
+                <select name="kategori" id="edit_kategori" required>
+                    <option value="mobil">Mobil</option>
+                    <option value="elektronik">Elektronik</option>
+                </select>
+                
+                <label>Plat Nomor:</label>
+                <input type="text" name="plat_nomor" id="edit_plat">
+                
+                <label>Status:</label> 
+                <select name="status_aset" id="edit_status" required>
+                    <option value="tersedia">Tersedia</option>
+                    <option value="maintenance">Maintenance</option>
+                    <option value="rusak">Rusak</option>
+                </select>
+                
+                <label>Gambar Baru:</label>
+                <input type="file" name="gambar">
+                
+                <div style="margin-top:20px;">
+                    <button type="submit" name="update_aset">Update</button>
+                    <button type="button" onclick="document.getElementById('editForm').style.display='none'">Batal</button>
+                </div>
+            </form>
+        </div>
+
+    </div> <script>
+    // Saya update sedikit fungsi JS-nya agar form terisi otomatis saat klik Edit
+    function editAset(id, nama, kategori, plat, status) {
         document.getElementById('editForm').style.display = 'block';
-        // Isi form dengan data (bisa dari AJAX)
+        
+        document.getElementById('edit_id').value = id;
+        document.getElementById('edit_nama').value = nama;
+        document.getElementById('edit_kategori').value = kategori;
+        document.getElementById('edit_plat').value = plat;
+        document.getElementById('edit_status').value = status;
     }
     </script>
     

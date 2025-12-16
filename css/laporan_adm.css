@@ -1,0 +1,244 @@
+/* ========================
+   RESET & GLOBAL
+======================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Tahoma, sans-serif;
+}
+
+body {
+    background-color: #F4F6F8;
+    color: #0A192F;
+}
+
+/* ========================
+   SIDEBAR (WAJIB SAMA)
+======================== */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100vh;
+    background: linear-gradient(180deg, #0A192F, #071326);
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+.sidebar h2 {
+    color: #64FFDA;
+    font-size: 32px;
+    text-align: center;
+    margin-bottom: 40px;
+    letter-spacing: 2px;
+}
+
+.sidebar a {
+    color: #FFFFFF;
+    text-decoration: none;
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    font-size: 15px;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidebar a:hover {
+    background-color: #1C2A44;
+}
+
+.sidebar .logout {
+    margin-top: auto;
+    border: 1px solid #FF8C00;
+    color: #FF8C00;
+    text-align: center;
+}
+
+.sidebar .logout:hover {
+    background-color: #FF8C00;
+    color: #FFFFFF;
+}
+
+/* ========================
+   MAIN CONTENT
+======================== */
+.main-content {
+    margin-left: 260px;
+    padding: 40px;
+    width: calc(100% - 260px);
+}
+
+/* Header Text */
+h1 {
+    color: #64FFDA;
+    background-color: #0A192F;
+    padding: 20px 30px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    font-size: 26px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+h3 {
+    color: #0A192F;
+    margin-bottom: 15px;
+    font-size: 18px;
+    margin-top: 30px;
+}
+
+/* ========================
+   FILTER SECTION (CARD STYLE)
+======================== */
+.filter-card {
+    background: #FFFFFF;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    display: flex;
+    gap: 20px;
+    align-items: flex-end; /* Supaya tombol lurus dengan input */
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-group label {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #64748B;
+}
+
+.filter-group input,
+.filter-group select {
+    padding: 10px;
+    border: 1px solid #CBD5E1;
+    border-radius: 6px;
+    font-size: 14px;
+    min-width: 150px;
+}
+
+.btn-filter {
+    background-color: #FF8C00;
+    color: #0A192F;
+    padding: 10px 25px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    height: 42px; /* Samakan tinggi dengan input */
+}
+
+/* ========================
+   STATISTICS (GRID BOXES)
+======================== */
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.stat-box {
+    background: #FFFFFF;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    text-align: center;
+    border-bottom: 4px solid #E2E8F0;
+}
+
+.stat-box h4 {
+    font-size: 14px;
+    color: #64748B;
+    margin-bottom: 10px;
+}
+
+.stat-box .number {
+    font-size: 28px;
+    font-weight: bold;
+    color: #0A192F;
+}
+
+/* Warna border bawah status */
+.stat-total { border-color: #0A192F; }
+.stat-approved { border-color: #198754; } /* Hijau */
+.stat-rejected { border-color: #DC3545; } /* Merah */
+.stat-pending { border-color: #FFC107; } /* Kuning */
+
+/* ========================
+   TABLE STYLING (FULL WIDTH)
+======================== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #FFFFFF;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+table th, table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #E2E8F0;
+    font-size: 14px;
+}
+
+table th {
+    background-color: #0A192F;
+    color: #FFFFFF;
+    text-transform: uppercase;
+}
+
+table tr:hover {
+    background-color: #F8FAFC;
+}
+
+/* Status Badge di Tabel */
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: capitalize;
+}
+.status-approved { background: #d1e7dd; color: #0f5132; }
+.status-rejected { background: #f8d7da; color: #842029; }
+.status-pending { background: #fff3cd; color: #664d03; }
+
+/* ========================
+   EXPORT BUTTONS
+======================== */
+.export-buttons {
+    margin-top: 20px;
+}
+
+.btn-print, .btn-excel {
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.btn-print {
+    background-color: #64748B;
+    color: white;
+}
+
+.btn-excel {
+    background-color: #198754;
+    color: white;
+}
