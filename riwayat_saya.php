@@ -165,7 +165,6 @@ $riwayat = $stmt->fetchAll();
         </div>
 
         <div class="quick-actions">
-            <a href="index.php" class="btn btn-secondary">Kembali ke Dashboard</a>
             <a href="katalog_aset.php" class="btn btn-primary">Pinjam Aset Baru</a>
         </div>
     </div>

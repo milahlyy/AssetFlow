@@ -49,12 +49,6 @@ body {
     transform: translateX(5px);
 }
 
-.sidebar a.active {
-    background-color: #64FFDA;
-    color: #0A192F;
-    font-weight: bold;
-}
-
 .sidebar .logout {
     margin-top: auto;
     border: 1px solid #FF8C00;
@@ -444,9 +438,6 @@ h3 {
     background-color: #FF8C00;
 }
 
-.quick-actions .btn-secondary {
-    background-color: #6c757d;
-}
 
 /* ASSET INFO (untuk tabel) */
 .asset-info-table {

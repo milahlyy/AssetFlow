@@ -177,11 +177,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kembalikan'])) {
                 </table>
             <?php endif; ?>
         </div>
-
-        <div class="quick-actions">
-            <a href="katalog_aset.php" class="btn-primary">Lihat Katalog Aset</a>
-            <a href="riwayat_saya.php" class="btn-secondary">Riwayat Peminjaman</a>
-        </div>
     </div>
 </body>
 </html>
