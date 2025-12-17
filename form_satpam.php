@@ -18,7 +18,10 @@ $stmt->bindParam(':id', $id_loan);
 $stmt->execute();
 $data = $stmt->fetch();
 
-if (!$data) die("Data peminjaman tidak ditemukan.");
+if (!$data) {
+    header("Location: dashboard_operasional.php?error=data_tidak_ditemukan");
+    exit();
+}
 
 // 2. PROSES UPDATE DATA
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -43,11 +46,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $final_jam_masuk = !empty($input_jam_masuk) ? $input_jam_masuk : null;
     }
 
-    // Logic Status: Jika jam keluar terisi, status 'on_loan'. 
-    // (Opsional: Jika jam masuk terisi, bisa ubah status ke 'returned' atau biarkan on_loan)
+    // Logic Status: 
+    // 1. Jika jam keluar terisi dan status masih 'approved', ubah ke 'on_loan'
+    // 2. Jika jam masuk terisi dan status masih 'on_loan', ubah ke 'returned' (mobil sudah kembali)
     $sql_status = "";
     if (!empty($final_jam_keluar) && $data['status_loan'] == 'approved') {
+        // Mobil baru keluar
         $sql_status = ", status_loan = 'on_loan'";
+    } elseif (!empty($final_jam_masuk) && $data['status_loan'] == 'on_loan') {
+        // Mobil sudah kembali (jam masuk diisi)
+        $sql_status = ", status_loan = 'returned'";
     }
 
     // Query Update
