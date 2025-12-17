@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once 'database/db.php';
 require_once 'auth_check.php';
 checkrole(['hrga']);

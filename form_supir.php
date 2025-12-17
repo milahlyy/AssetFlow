@@ -19,7 +19,10 @@ $stmt->bindParam(':did', $my_id);
 $stmt->execute();
 $data = $stmt->fetch();
 
-if (!$data) die("Tugas tidak ditemukan atau bukan tugas Anda.");
+if (!$data) {
+    header("Location: dashboard_operasional.php?error=tugas_tidak_ditemukan");
+    exit();
+}
 
 // Proses simpan
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
