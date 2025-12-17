@@ -5,7 +5,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, sans-serif;
+    font-family: "Segoe UI", Tahoma, sans-serif;
 }
 
 body {
@@ -14,7 +14,7 @@ body {
 }
 
 /* ======================
-   SIDEBAR (DISAMAIN)
+   SIDEBAR 
 ====================== */
 .sidebar {
     width: 240px;
@@ -44,7 +44,6 @@ body {
     transition: all 0.3s ease;
 }
 
-/* hover sama persis */
 .sidebar a:hover {
     background-color: #112240;
     transform: translateX(5px);

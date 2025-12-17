@@ -225,7 +225,7 @@ table a {
 table a:hover { background-color: #bb2d3b; }
 
 /* ========================
-   6. MODAL EDIT (Override Style Inline)
+   6. MODAL EDIT 
 ======================== */
 #editForm {
     /* Style dasar sudah ada di inline HTML PHP, 
@@ -237,9 +237,6 @@ table a:hover { background-color: #bb2d3b; }
     width: 500px;
     max-width: 90%;
 }
-
-/* Overlay gelap di belakang modal (opsional, perlu JS tambahan sebenarnya) */
-
 /* Hilangkan garis HR */
 hr {
     border: 0;

@@ -2,7 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, sans-serif;
+    font-family: "Segoe UI", Tahoma, sans-serif;
 }
 
 body {
@@ -34,7 +34,7 @@ a:hover {
     text-decoration: underline;
 }
 
-/* ===== CARD UTAMA (SATU CARD SAJA) ===== */
+/* ===== CARD UTAMA  ===== */
 .card {
     background: #ffffff;
     max-width: 620px;       
