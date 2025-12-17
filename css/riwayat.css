@@ -9,27 +9,30 @@
 }
 
 body {
-    background-color: #f5f6fa;
-    display: flex;
+    background-color: #F4F6F8;
+    color: #0A192F;
 }
 
 /* ======================
    SIDEBAR 
 ====================== */
 .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 260px;
-    min-height: 100vh;
-    background-color: #0A192F; 
+    height: 100vh;
+    background: linear-gradient(180deg, #0A192F, #071326);
     padding: 30px 20px;
     display: flex;
     flex-direction: column;
+    z-index: 1000;
 }
 
 .sidebar h2 {
     color: #64FFDA;
     font-size: 32px;
     text-align: center;
-    margin-top: 20px;
     margin-bottom: 40px;
     letter-spacing: 2px;
 }
@@ -45,10 +48,15 @@ body {
     transition: all 0.3s ease;
 }
 
-.sidebar a:hover,
-.sidebar a.active {
-    background-color: #112240;
+.sidebar a:hover {
+    background-color: #1C2A44;
     transform: translateX(5px);
+}
+
+.sidebar a.active {
+    background-color: #64FFDA;
+    color: #0A192F;
+    font-weight: bold;
 }
 
 .sidebar .logout {
@@ -67,8 +75,8 @@ body {
    MAIN CONTENT
 ====================== */
 .main-content {
-    flex: 1;
-    padding: 30px;
+    margin-left: 260px;
+    padding: 40px;
 }
 
 h1 {
@@ -109,4 +117,16 @@ td {
 
 tr:hover {
     background-color: #FAFAFA;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+    
+    .main-content {
+        margin-left: 0;
+        padding: 20px;
+    }
 }

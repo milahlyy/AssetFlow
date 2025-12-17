@@ -11,7 +11,6 @@
 body {
     background-color: #F4F6F8;
     color: #0A192F;
-    padding-left: 260px; 
 }
 
 /* ========================
@@ -70,7 +69,8 @@ body {
    MAIN CONTENT
 ======================== */
 .main-content {
-    padding: 30px;
+    margin-left: 260px;
+    padding: 40px;
 }
 
 h1 {
@@ -255,5 +255,17 @@ h1 {
 @keyframes fadeIn {
     from {opacity: 0; transform: translateY(-20px);} 
     to {opacity: 1; transform: translateY(0);}
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+    
+    .main-content {
+        margin-left: 0;
+        padding: 20px;
+    }
 }
 
