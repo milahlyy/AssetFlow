@@ -4,7 +4,7 @@ require_once 'database/db.php';
 require_once 'auth_check.php';
 checkrole(['hrga']);
 
-// Handle approve/reject (TIDAK DIUBAH SAMA SEKALI)
+// Handle approve/reject 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id_loan = $_POST['id_loan'];
     $action = $_POST['action'];
@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// Get pending loans (TIDAK DIUBAH SAMA SEKALI)
+// Get pending loans
 $loans = $conn->query("
     SELECT l.*, u.nama as pemohon, a.nama_aset, a.kategori 
     FROM loans l 
@@ -32,7 +32,7 @@ $loans = $conn->query("
     ORDER BY l.tgl_pinjam ASC
 ")->fetchAll();
 
-// Get drivers (TIDAK DIUBAH SAMA SEKALI)
+// Get drivers 
 $drivers = $conn->query("SELECT * FROM users WHERE role='supir'")->fetchAll();
 ?>
 
