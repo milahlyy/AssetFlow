@@ -10,9 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $aksi = $_POST['aksi'] ?? '';
 
-/* =========================
-   TAMBAH USER
-========================= */
+/* TAMBAH USER */
 if ($aksi === 'tambah') {
 
     $nama     = $_POST['nama'];
@@ -31,9 +29,7 @@ if ($aksi === 'tambah') {
     exit;
 }
 
-/* =========================
-   EDIT USER
-========================= */
+/*  EDIT USER */
 if ($aksi === 'edit') {
 
     $id_user = $_POST['id_user'];
@@ -67,8 +63,6 @@ if ($aksi === 'edit') {
     exit;
 }
 
-/* =========================
-   DEFAULT
-========================= */
+/*  DEFAULT  */
 header("Location: kelola_user.php");
 exit;

@@ -7,8 +7,7 @@ $id_loan = $_GET['id_loan'] ?? 0;
 $pesan = '';
 $error = '';
 
-// 1. AMBIL DATA LAMA DULU (PENTING: Ini harus dilakukan SEBELUM proses POST)
-// Agar kita bisa membandingkan input baru dengan data yang sudah ada di DB.
+// ambil data lama
 $stmt = $conn->prepare("SELECT l.*, a.nama_aset, a.plat_nomor, u.nama as peminjam 
                         FROM loans l 
                         JOIN assets a ON l.id_aset = a.id_aset 
@@ -23,23 +22,18 @@ if (!$data) {
     exit();
 }
 
-// 2. PROSES UPDATE DATA
+// update data
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $input_jam_keluar = $_POST['jam_keluar'];
     $input_jam_masuk  = $_POST['jam_masuk'];
     $id_target        = $_POST['id_loan'];
 
-    // --- LOGIKA PERBAIKAN ---
-    // Cek Jam Keluar: Jika input user kosong TAPI di database sudah ada datanya, 
-    // maka PAKAI DATA LAMA (jangan ditimpa jadi 00:00).
     if (empty($input_jam_keluar) && !empty($data['jam_keluar'])) {
         $final_jam_keluar = $data['jam_keluar'];
     } else {
-        // Jika input ada isinya, pakai input. Jika kosong & db kosong, set NULL.
         $final_jam_keluar = !empty($input_jam_keluar) ? $input_jam_keluar : null;
     }
 
-    // Cek Jam Masuk: Sama seperti di atas
     if (empty($input_jam_masuk) && !empty($data['jam_masuk'])) {
         $final_jam_masuk = $data['jam_masuk'];
     } else {
@@ -47,17 +41,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // Logic Status: 
-    // 1. Jika jam keluar terisi dan status masih 'approved', ubah ke 'on_loan'
-    // 2. Status TIDAK langsung jadi 'returned' saat jam masuk diisi
-    //    Status 'returned' hanya bisa diubah setelah semua data lengkap (dari form pegawai atau admin)
     $sql_status = "";
     if (!empty($final_jam_keluar) && $data['status_loan'] == 'approved') {
         // Mobil baru keluar
         $sql_status = ", status_loan = 'on_loan'";
     }
-    // Catatan: Status tetap 'on_loan' meskipun jam masuk sudah diisi
-    // Supir masih bisa mengisi log (km_awal, km_akhir, kondisi_mobil)
-    // Status 'returned' akan diubah oleh pegawai saat klik "Kembalikan" atau admin
 
     // Query Update
     $query = "UPDATE loans SET jam_keluar = :jk, jam_masuk = :jm $sql_status WHERE id_loan = :id";

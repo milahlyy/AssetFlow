@@ -42,8 +42,7 @@ $userId = $_SESSION['user_id'];
         <p>Silakan update jam keluar jika mobil berangkat, atau jam masuk jika mobil kembali.</p>
 
         <?php
-        // Logic Satpam: Satpam bisa update log untuk status 'approved', 'on_loan', atau 'returned'
-        // (jika data belum lengkap: jam_keluar atau jam_masuk masih kosong)
+        // Logic Satpam
         $query = "SELECT l.id_loan, l.status_loan, l.jam_keluar, l.jam_masuk, l.keterangan,
                          a.nama_aset, a.plat_nomor, u.nama as peminjam 
                   FROM loans l
@@ -98,8 +97,7 @@ $userId = $_SESSION['user_id'];
         <p>Silakan update KM Awal sebelum berangkat dan KM Akhir setelah pulang.</p>
 
         <?php
-        // Logic Supir: Supir bisa mengisi log selama status 'approved', 'on_loan', atau 'returned' 
-        // (jika data belum lengkap: km_awal, km_akhir, atau kondisi_mobil masih kosong)
+        // Logic Supir
         $query = "SELECT l.id_loan, l.tgl_pinjam, l.km_awal, l.km_akhir, l.kondisi_mobil, l.keterangan,
                          a.nama_aset, a.plat_nomor, u.nama as peminjam, l.status_loan
                   FROM loans l

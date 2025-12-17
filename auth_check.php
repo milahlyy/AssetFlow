@@ -1,10 +1,10 @@
 <?php
-// Tugas: Memastikan user sudah login sebelum melihat konten halaman
+// Memastikan user sudah login sebelum melihat konten halaman
 if(session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// 1. Cek apakah ada data user_id di session?
+// Cek ada data user_id di session
 if(!isset($_SESSION['user_id'])) {
     // Kalau tidak ada, berarti belum login. Tendang ke login.php
     header("Location: login.php");
@@ -22,7 +22,6 @@ if (isset($_SESSION['last_activity']) &&
 // Update waktu aktivitas terakhir
 $_SESSION['last_activity'] = time();
 
-// Membuat role-based access control (RBAC) 
 // masing-masing halaman hanya bisa diakses oleh masing-masing role
 function checkrole($allowed_roles) {
     // Cek apakah role ada di session

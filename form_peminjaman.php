@@ -1,5 +1,5 @@
 <?php
-// Form Peminjaman - Booking dengan validasi tanggal
+// Form Peminjaman
 require_once 'database/db.php';
 require_once 'auth_check.php';
 checkrole(['pegawai']);
@@ -36,7 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $keterangan = trim($_POST['keterangan'] ?? '');
     $butuh_supir = isset($_POST['butuh_supir']) && $_POST['butuh_supir'] == '1';
     
-    // Jika kategori mobil dan user menceklis butuh supir, tambahkan "(Request Supir)" ke keterangan
     if ($aset['kategori'] == 'mobil' && $butuh_supir) {
         $keterangan .= ' (Request Supir)';
     }
@@ -50,8 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $error = "Tanggal pinjam tidak boleh di masa lalu!";
     } else {
         // Validasi bentrok jadwal
-        // Cek apakah ada peminjaman lain yang bentrok dengan tanggal yang diminta
-        // Dua rentang tanggal bentrok jika: (start1 <= end2) AND (start2 <= end1)
         $check_conflict = $conn->prepare("
             SELECT COUNT(*) as jumlah 
             FROM loans 
@@ -200,7 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 
     <script>
-        // Validasi client-side: Tanggal kembali harus setelah tanggal pinjam
+        // Validasi client-side
         document.getElementById('tgl_pinjam').addEventListener('change', function() {
             const tglKembali = document.getElementById('tgl_kembali');
             tglKembali.min = this.value;

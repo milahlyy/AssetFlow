@@ -187,7 +187,7 @@ $assets = $conn->query("SELECT * FROM assets ORDER BY id_aset DESC")->fetchAll()
         </div>
 
     </div> <script>
-    // Saya update sedikit fungsi JS-nya agar form terisi otomatis saat klik Edit
+ 
     function editAset(id, nama, kategori, plat, status) {
         document.getElementById('editForm').style.display = 'block';
         

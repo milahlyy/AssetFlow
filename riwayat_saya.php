@@ -1,5 +1,5 @@
 <?php
-// Riwayat Peminjaman Pegawai - Arsip sejarah peminjaman
+// Riwayat Peminjaman Pegawai - Arsip peminjaman
 require_once 'database/db.php';
 require_once 'auth_check.php';
 checkrole(['pegawai']);
@@ -16,7 +16,7 @@ $query = "SELECT l.*, a.nama_aset, a.kategori, a.plat_nomor, a.gambar
           JOIN assets a ON l.id_aset = a.id_aset
           WHERE l.id_user = :user_id";
 
-// Filter berdasarkan status - disederhanakan
+// Filter berdasarkan status
 if ($filter_status == 'dikembalikan') {
     $query .= " AND l.status_loan = 'returned'";
 } elseif ($filter_status == 'ditolak') {

@@ -1,7 +1,7 @@
 <?php
-//1. memanggil koneksi database dan memulai session
+// memanggil koneksi database dan memulai session
 require_once 'database/db.php';
-//2. mengecek apakah user sudah login
+// mengecek apakah user sudah login
 if (isset($_SESSION['user_id'])) {
     // Kalau sudah login, arahkan ke dashboard masing masing role
     if ($_SESSION['role'] === 'hrga'){
@@ -16,7 +16,7 @@ if (isset($_SESSION['user_id'])) {
 
 $error = '';
 
-//3. proses login jika user belum login dan menekan tombol login
+// proses login jika user belum login dan menekan tombol login
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
     $password = $_POST['password'];

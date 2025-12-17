@@ -1,5 +1,4 @@
 <?php
-// File: detail_mobil.php
 require_once 'auth_check.php';
 require_once 'database/db.php';
 
@@ -49,7 +48,6 @@ $active_loan = $stmtLoan->fetch();
 
 <div class="detail-wrapper">
 
-    <!-- KIRI : INFO MOBIL -->
     <div class="mobil-card">
         <?php if ($mobil['gambar']): ?>
             <img src="assets/img/<?php echo $mobil['gambar']; ?>">
@@ -66,7 +64,6 @@ $active_loan = $stmtLoan->fetch();
         </p>
     </div>
 
-    <!-- KANAN : STATUS PEMINJAMAN -->
     <div class="status-card">
         <h3>Status Peminjaman</h3>
 
