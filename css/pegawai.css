@@ -79,17 +79,17 @@ transform: translateX(5px);
 .header {
     margin-bottom: 30px;
     padding-bottom: 20px;
-      border-bottom: 2px solid #64FFDA;
+    border-bottom: 2px solid #64FFDA;
 }
 
 .header h1 {
-    color: #64FFDA
+    color: #64FFDA;
     font-size: 32px;
     margin-bottom: 10px;
 }
 
 .welcome {
-    color: #666
+    color: #666;
     font-size: 16px;
 }
 
