@@ -170,7 +170,6 @@ foreach($reports as $r) {
             
             <div class="export-buttons">
                 <a href="javascript:window.print()" class="btn-print">Cetak PDF / Print</a>
-                <a href="export_excel.php?start_date=<?= $start_date ?>&end_date=<?= $end_date ?>&status=<?= $status ?>&kategori=<?= $kategori ?>" class="btn-excel">Export Excel</a>
             </div>
         <?php endif; ?>
         
