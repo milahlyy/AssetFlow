@@ -42,7 +42,7 @@ $recent_pending = $conn->query("
 
     <div class="main-content">
         <h1>Dashboard HRGA</h1>
-        <p class="welcome">Selamat datang, <b><?= htmlspecialchars($_SESSION['nama']) ?></b> (<?= $_SESSION['role'] ?>)</p>
+        <p class="welcome">Selamat datang, <b><?= htmlspecialchars($_SESSION['nama']) ?></b></p>
         
         <h2>Statistik</h2>
         <div class="stats-grid">
@@ -68,7 +68,7 @@ $recent_pending = $conn->query("
             </div>
         </div>
         
-        <h2>Quick Actions</h2>
+        <!<h2>Quick Actions</h2>
         <div class="quick-actions">
             <a href="kelola_aset.php" class="btn-blue">Kelola Aset</a>
             <a href="persetujuan.php" class="btn-yellow">Persetujuan Peminjaman</a>
