@@ -2,7 +2,7 @@
 // File: riwayat.php
 require_once 'auth_check.php';
 require_once 'database/db.php';
-
+//cek role
 checkrole(['satpam', 'supir']);
 
 $role = $_SESSION['role'];
