@@ -11,9 +11,7 @@ body {
     color: #0A192F;
 }
 
-/* ========================
-   SIDEBAR 
-======================== */
+/* SIDEBAR */
 .sidebar {
     position: fixed;
     top: 0;
@@ -63,9 +61,7 @@ body {
     color: #FFFFFF;
 }
 
-/* ========================
-   MAIN CONTENT
-======================== */
+/* MAIN CONTENT */
 .main-content {
     margin-left: 260px;
     padding: 40px;
@@ -89,9 +85,7 @@ h1 {
     margin-top: 10px;
 }
 
-/* ========================
-   FORM TAMBAH & EDIT USER
-======================== */
+/*  FORM TAMBAH & EDIT USER */
 form {
     background: #FFFFFF;
     padding: 25px;
@@ -154,9 +148,7 @@ form button[type="button"]:hover {
     background-color: #CBD5E1;
 }
 
-/* ========================
-   TABLE USER
-======================== */
+/* TABLE USER */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -186,9 +178,7 @@ table tr:hover {
     background-color: #F8FAFC;
 }
 
-/* ========================
-   TOMBOL AKSI
-======================== */
+/*  TOMBOL AKSI */
 table button,
 table a {
     display: inline-block;
@@ -221,9 +211,7 @@ table a:hover {
     background-color: #bb2d3b;
 }
 
-/* ========================
-   POPUP EDIT USER
-======================== */
+/* POPUP EDIT USER */
 #editUserForm {
     border-radius: 15px !important;
     border: none !important;
@@ -233,9 +221,7 @@ table a:hover {
     max-width: 90%;
 }
 
-/* ========================
-   HR & RESPONSIVE
-======================== */
+/*  HR & RESPONSIVE */
 hr {
     border: none;
     border-top: 1px solid #E2E8F0;

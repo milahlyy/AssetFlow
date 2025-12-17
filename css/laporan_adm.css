@@ -1,6 +1,4 @@
-/* ========================
-   RESET & GLOBAL
-======================== */
+/* RESET & GLOBAL */
 * {
     margin: 0;
     padding: 0;
@@ -13,9 +11,7 @@ body {
     color: #0A192F;
 }
 
-/* ========================
-   SIDEBAR 
-======================== */
+/* SIDEBAR */
 .sidebar {
     position: fixed;
     top: 0;
@@ -65,9 +61,7 @@ body {
     color: #FFFFFF;
 }
 
-/* ========================
-   MAIN CONTENT
-======================== */
+/* MAIN CONTENT */
 .main-content {
     margin-left: 260px;
     padding: 40px;
@@ -92,9 +86,7 @@ h3 {
     margin-top: 30px;
 }
 
-/* ========================
-   FILTER SECTION 
-======================== */
+/*  FILTER SECTION  */
 .filter-card {
     background: #FFFFFF;
     padding: 25px;
@@ -139,9 +131,7 @@ h3 {
     height: 42px; /* Samakan tinggi dengan input */
 }
 
-/* ========================
-   STATISTICS (GRID BOXES)
-======================== */
+/*  STATISTICS */
 .stats-container {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -176,9 +166,7 @@ h3 {
 .stat-rejected { border-color: #DC3545; } /* Merah */
 .stat-pending { border-color: #FFC107; } /* Kuning */
 
-/* ========================
-   TABLE STYLING 
-======================== */
+/* TABLE STYLING  */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -217,9 +205,7 @@ table tr:hover {
 .status-rejected { background: #f8d7da; color: #842029; }
 .status-pending { background: #fff3cd; color: #664d03; }
 
-/* ========================
-   EXPORT BUTTONS
-======================== */
+/* EXPORT BUTTONS */
 .export-buttons {
     margin-top: 20px;
 }

@@ -60,9 +60,7 @@ body {
     color: #FFFFFF;
 }
 
-/* ========================
-   3. MAIN CONTENT
-======================== */
+/* MAIN CONTENT */
 .main-content {
     margin-left: 260px;
     padding: 40px;
@@ -93,9 +91,7 @@ p {
     margin-bottom: 15px;
 }
 
-/* ========================
-   4. FORM STYLING (Tambah/Edit)
-======================== */
+/* FORM  */
 form {
     background: #FFFFFF;
     padding: 25px;
@@ -154,9 +150,7 @@ form button[type="button"]:hover {
     background-color: #CBD5E1;
 }
 
-/* ========================
-   5. TABLE STYLING (Daftar Aset)
-======================== */
+/* TABLE Daftar Aset */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -219,17 +213,14 @@ table button:hover { background-color: #e0a800; }
 
 /* Tombol Hapus */
 table a {
-    background-color: #DC3545; /* Merah */
+    background-color: #DC3545; 
     color: #fff;
 }
 table a:hover { background-color: #bb2d3b; }
 
-/* ========================
-   6. MODAL EDIT 
-======================== */
+/* MODAL EDIT */
 #editForm {
-    /* Style dasar sudah ada di inline HTML PHP, 
-       tapi kita percantik border & shadownya lewat CSS */
+   
     border-radius: 15px !important;
     border: none !important;
     box-shadow: 0 20px 50px rgba(0,0,0,0.3) !important;

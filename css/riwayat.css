@@ -1,6 +1,4 @@
-/* ======================
-   RESET & GLOBAL
-====================== */
+/* RESET & GLOBAL */
 * {
     margin: 0;
     padding: 0;
@@ -13,9 +11,7 @@ body {
     color: #0A192F;
 }
 
-/* ======================
-   SIDEBAR 
-====================== */
+/* SIDEBAR */
 .sidebar {
     position: fixed;
     top: 0;
@@ -71,9 +67,7 @@ body {
     color: #ffffff;
 }
 
-/* ======================
-   MAIN CONTENT
-====================== */
+/* MAIN CONTENT */
 .main-content {
     margin-left: 260px;
     padding: 40px;
@@ -89,9 +83,7 @@ h1 {
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-/* ======================
-   TABEL RIWAYAT
-====================== */
+/* TABEL RIWAYAT */
 table {
     width: 100%;
     border-collapse: collapse;

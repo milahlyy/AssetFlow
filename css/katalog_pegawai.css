@@ -1,6 +1,4 @@
-/* ======================
-   RESET & GLOBAL
-====================== */
+/* RESET & GLOBAL */
 * {
     margin: 0;
     padding: 0;
@@ -13,9 +11,7 @@ body {
     display: flex;
 }
 
-/* ======================
-   SIDEBAR
-====================== */
+/* SIDEBAR */
 .sidebar {
    width: 260px;
     min-height: 100vh;
@@ -62,17 +58,13 @@ body {
     color: #FFFFFF;
 }
 
-/* ======================
-   MAIN CONTENT
-====================== */
+/* MAIN CONTENT */
 .main-content {
     flex: 1;
     padding: 30px;
 }
 
-/* ======================
-   PAGE HEADER
-====================== */
+/* PAGE HEADER */
 .page-header {
     border-bottom: 2px solid #000;
     padding-bottom: 12px;
@@ -94,9 +86,7 @@ body {
     color: #333;
 }
 
-/* ======================
-   TABLE
-====================== */
+/* TABLE */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -122,9 +112,7 @@ table td {
     text-align: center;
 }
 
-/* ======================
-   BUTTON
-====================== */
+/* BUTTON */
 .btn {
     padding: 6px 14px;
     border-radius: 6px;
