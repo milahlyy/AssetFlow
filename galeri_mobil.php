@@ -5,6 +5,7 @@ require_once 'database/db.php';
 // Pastikan hanya Satpam dan Supir yang bisa akses
 checkrole(['satpam', 'supir']);
 
+
 // Ambil semua data mobil
 $list = $conn->query("SELECT * FROM assets WHERE kategori='mobil'")->fetchAll();
 ?>
