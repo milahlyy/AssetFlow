@@ -75,42 +75,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
     <h2>Form Keamanan</h2>
     <a href="dashboard_operasional.php">&laquo; Kembali ke Dashboard</a>
-    <hr>
 
     <?php if($pesan): ?>
         <p style="color: green; font-weight: bold;"><?php echo $pesan; ?></p>
     <?php endif; ?>
+
     <?php if($error): ?>
         <p style="color: red; font-weight: bold;"><?php echo $error; ?></p>
     <?php endif; ?>
 
-    <table border="0" cellpadding="5">
-        <tr>
-            <td><strong>Kendaraan</strong></td>
-            <td>: <?php echo htmlspecialchars($data['nama_aset']); ?> (<?php echo htmlspecialchars($data['plat_nomor']); ?>)</td>
-        </tr>
-        <tr>
-            <td><strong>Peminjam</strong></td>
-            <td>: <?php echo htmlspecialchars($data['peminjam']); ?></td>
-        </tr>
-    </table>
-    <br>
+    <div class="card">
+        <table>
+            <tr>
+                <td><strong>Kendaraan</strong></td>
+                <td>: <?= htmlspecialchars($data['nama_aset']) ?> (<?= htmlspecialchars($data['plat_nomor']) ?>)</td>
+            </tr>
+            <tr>
+                <td><strong>Peminjam</strong></td>
+                <td>: <?= htmlspecialchars($data['peminjam']) ?></td>
+            </tr>
+        </table>
 
-    <form method="POST">
-        <input type="hidden" name="id_loan" value="<?php echo $data['id_loan']; ?>">
-        
-        <label><strong>Jam Keluar (Waktu Berangkat):</strong></label><br>
-        <input type="datetime-local" name="jam_keluar" 
-               value="<?php echo !empty($data['jam_keluar']) ? date('Y-m-d\TH:i', strtotime($data['jam_keluar'])) : ''; ?>">
-        <br><small><i>Biarkan jika tidak ingin mengubah jam keluar.</i></small>
-        <br><br>
+        <form method="POST">
+            <input type="hidden" name="id_loan" value="<?= $data['id_loan']; ?>">
 
-        <label><strong>Jam Masuk (Waktu Kembali):</strong></label><br>
-        <input type="datetime-local" name="jam_masuk"
-               value="<?php echo !empty($data['jam_masuk']) ? date('Y-m-d\TH:i', strtotime($data['jam_masuk'])) : ''; ?>">
-        <br><br>
+            <label>Jam Keluar (Waktu Berangkat):</label>
+            <input type="datetime-local" name="jam_keluar"
+                value="<?= !empty($data['jam_keluar']) ? date('Y-m-d\TH:i', strtotime($data['jam_keluar'])) : ''; ?>">
+            <small>Biarkan jika tidak ingin mengubah jam keluar.</small>
 
-        <button type="submit">SIMPAN DATA</button>
-    </form>
+            <label style="margin-top:15px; display:block;">Jam Masuk (Waktu Kembali):</label>
+            <input type="datetime-local" name="jam_masuk"
+                value="<?= !empty($data['jam_masuk']) ? date('Y-m-d\TH:i', strtotime($data['jam_masuk'])) : ''; ?>">
+
+            <button type="submit">SIMPAN DATA</button>
+        </form>
+    </div>
 </body>
 </html>
