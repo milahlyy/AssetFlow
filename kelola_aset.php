@@ -145,7 +145,7 @@ $assets = $conn->query("SELECT * FROM assets ORDER BY id_aset DESC")->fetchAll()
                             '<?= $asset['plat_nomor'] ?>', 
                             '<?= $asset['status_aset'] ?>'
                         )">Edit</button>
-                        <a href="?delete=<?= $asset['id_aset'] ?>" onclick="return confirm('Yakin?')">Hapus</a>
+                        <a href="?delete=<?= $asset['id_aset'] ?>" onclick="return confirm('Yakin akan menghapus aset ini?')">Hapus</a>
                     </td>
                 </tr>
                 <?php endforeach; ?>
