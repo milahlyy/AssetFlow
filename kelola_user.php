@@ -90,7 +90,6 @@ $users = $conn->query("SELECT * FROM users ORDER BY id_user DESC")->fetchAll();
         <p style="color:green; font-weight:bold;"><?= $message ?></p>
     <?php endif; ?>
 
-    // FORM TAMBAH USER 
     <h2>Tambah User</h2>
     <form method="POST">
         <label>Nama</label>
@@ -118,7 +117,6 @@ $users = $conn->query("SELECT * FROM users ORDER BY id_user DESC")->fetchAll();
 
     <hr>
 
-   // DAFTAR USER
     <h2>Daftar User</h2>
     <table>
         <tr>
