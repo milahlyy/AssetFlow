@@ -49,7 +49,7 @@ $riwayat = $stmt->fetchAll();
         <h2>AssetFlow</h2>
         <a href="index.php">Dashboard</a>
         <a href="katalog_aset.php">Katalog Aset</a>
-        <a href="riwayat_saya.php" class="active">Riwayat Saya</a>
+        <a href="riwayat_saya.php">Riwayat Saya</a>
         <a href="logout.php" class="logout">Logout</a>
     </div>
 

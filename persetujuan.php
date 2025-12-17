@@ -45,7 +45,7 @@ $drivers = $conn->query("SELECT * FROM users WHERE role='supir'")->fetchAll();
     
     <div class="sidebar">
         <h2>AssetFlow</h2>
-        <a href="admin_dashboard.php" class="active">Dashboard</a>
+        <a href="admin_dashboard.php">Dashboard</a>
         <a href="kelola_aset.php">Kelola Aset</a>
         <a href="persetujuan.php">Persetujuan Peminjaman</a>
         <a href="laporan.php">Laporan</a>
