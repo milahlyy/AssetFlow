@@ -41,7 +41,7 @@ $result = $stmt->fetchAll();
     <div class="sidebar">
     <h2>AssetFlow</h2>
 
-    <a href="dashboard_operasional.php" class="active">Dashboard</a>
+    <a href="dashboard_operasional.php" >Dashboard</a>
     <a href="galeri_mobil.php">Galeri Mobil</a>
     <a href="riwayat.php">Riwayat Log</a>
 
