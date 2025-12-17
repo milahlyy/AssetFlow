@@ -7,22 +7,30 @@ checkrole(['pegawai']);
 $user_id = $_SESSION['user_id'];
 $nama = $_SESSION['nama'];
 
-// Query: Aset yang sedang dipinjam (status on_loan)
+// Query: Aset yang sedang dipinjam (status on_loan ATAU approved yang tanggal pinjam sudah tiba)
 $query_sedang_pinjam = "SELECT l.*, a.nama_aset, a.kategori, a.plat_nomor, a.gambar
                         FROM loans l
                         JOIN assets a ON l.id_aset = a.id_aset
-                        WHERE l.id_user = :user_id AND l.status_loan = 'on_loan'
+                        WHERE l.id_user = :user_id 
+                        AND (
+                            l.status_loan = 'on_loan' 
+                            OR (l.status_loan = 'approved' AND l.tgl_pinjam <= CURDATE())
+                        )
                         ORDER BY l.tgl_pinjam DESC";
 $stmt_sedang = $conn->prepare($query_sedang_pinjam);
 $stmt_sedang->bindParam(':user_id', $user_id);
 $stmt_sedang->execute();
 $sedang_pinjam = $stmt_sedang->fetchAll();
 
-// Query: Menunggu persetujuan (status pending atau approved)
+// Query: Menunggu persetujuan (status pending ATAU approved yang tanggal pinjam belum tiba)
 $query_menunggu = "SELECT l.*, a.nama_aset, a.kategori, a.plat_nomor, a.gambar
                    FROM loans l
                    JOIN assets a ON l.id_aset = a.id_aset
-                   WHERE l.id_user = :user_id AND l.status_loan IN ('pending', 'approved')
+                   WHERE l.id_user = :user_id 
+                   AND (
+                       l.status_loan = 'pending' 
+                       OR (l.status_loan = 'approved' AND l.tgl_pinjam > CURDATE())
+                   )
                    ORDER BY l.tgl_pinjam DESC";
 $stmt_menunggu = $conn->prepare($query_menunggu);
 $stmt_menunggu->bindParam(':user_id', $user_id);
@@ -33,8 +41,8 @@ $menunggu = $stmt_menunggu->fetchAll();
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kembalikan'])) {
     $id_loan = $_POST['id_loan'];
     
-    // Validasi: Pastikan loan milik user ini dan status on_loan
-    $check = $conn->prepare("SELECT id_loan FROM loans WHERE id_loan = :id AND id_user = :user_id AND status_loan = 'on_loan'");
+    // Validasi: Pastikan loan milik user ini dan status on_loan atau approved (yang sudah tiba)
+    $check = $conn->prepare("SELECT id_loan FROM loans WHERE id_loan = :id AND id_user = :user_id AND (status_loan = 'on_loan' OR (status_loan = 'approved' AND tgl_pinjam <= CURDATE()))");
     $check->bindParam(':id', $id_loan);
     $check->bindParam(':user_id', $user_id);
     $check->execute();

@@ -16,13 +16,11 @@ $query = "SELECT l.*, a.nama_aset, a.kategori, a.plat_nomor, a.gambar
           JOIN assets a ON l.id_aset = a.id_aset
           WHERE l.id_user = :user_id";
 
-// Filter berdasarkan status
-if ($filter_status == 'selesai') {
-    $query .= " AND l.status_loan IN ('returned', 'rejected')";
+// Filter berdasarkan status - disederhanakan
+if ($filter_status == 'dikembalikan') {
+    $query .= " AND l.status_loan = 'returned'";
 } elseif ($filter_status == 'ditolak') {
     $query .= " AND l.status_loan = 'rejected'";
-} elseif ($filter_status == 'selesai_dipinjam') {
-    $query .= " AND l.status_loan = 'returned'";
 } elseif ($filter_status != 'all') {
     $query .= " AND l.status_loan = :status";
 }
@@ -31,7 +29,7 @@ $query .= " ORDER BY l.tgl_pinjam DESC";
 
 $stmt = $conn->prepare($query);
 $stmt->bindParam(':user_id', $user_id);
-if ($filter_status != 'all' && $filter_status != 'selesai' && $filter_status != 'ditolak' && $filter_status != 'selesai_dipinjam') {
+if ($filter_status != 'all' && $filter_status != 'dikembalikan' && $filter_status != 'ditolak') {
     $stmt->bindParam(':status', $filter_status);
 }
 $stmt->execute();
@@ -63,8 +61,7 @@ $riwayat = $stmt->fetchAll();
         <!-- Filter Status -->
         <div class="filter-section">
             <a href="?status=all" class="filter-btn <?= $filter_status == 'all' ? 'active' : '' ?>">Semua</a>
-            <a href="?status=selesai" class="filter-btn <?= $filter_status == 'selesai' ? 'active' : '' ?>">Selesai</a>
-            <a href="?status=selesai_dipinjam" class="filter-btn <?= $filter_status == 'selesai_dipinjam' ? 'active' : '' ?>">Selesai Dipinjam</a>
+            <a href="?status=dikembalikan" class="filter-btn <?= $filter_status == 'dikembalikan' ? 'active' : '' ?>">Dikembalikan</a>
             <a href="?status=ditolak" class="filter-btn <?= $filter_status == 'ditolak' ? 'active' : '' ?>">Ditolak</a>
         </div>
 
