@@ -14,7 +14,7 @@ body {
 }
 
 /* ======================
-   SIDEBAR (SAMA PERSIS DASHBOARD)
+   SIDEBAR 
 ====================== */
 .sidebar {
     width: 240px;
@@ -125,7 +125,7 @@ td img {
     border-radius: 8px;
 }
 
-/* link nama mobil (biar nyatu) */
+/* link nama mobil*/
 a.nama-mobil {
     color: #0A192F;
     font-weight: bold;

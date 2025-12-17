@@ -14,7 +14,7 @@ body {
 }
 
 /* ========================
-   SIDEBAR (WAJIB SAMA)
+   SIDEBAR 
 ======================== */
 .sidebar {
     position: fixed;
@@ -93,7 +93,7 @@ h3 {
 }
 
 /* ========================
-   FILTER SECTION (CARD STYLE)
+   FILTER SECTION 
 ======================== */
 .filter-card {
     background: #FFFFFF;
@@ -177,7 +177,7 @@ h3 {
 .stat-pending { border-color: #FFC107; } /* Kuning */
 
 /* ========================
-   TABLE STYLING (FULL WIDTH)
+   TABLE STYLING 
 ======================== */
 table {
     width: 100%;
