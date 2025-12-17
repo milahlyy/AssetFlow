@@ -4,9 +4,7 @@ require_once 'database/db.php';
 require_once 'auth_check.php';
 checkrole(['hrga']);
 
-/* =======================
-   HANDLE TAMBAH & UPDATE
-======================= */
+// HANDLE TAMBAH & UPDATE
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // TAMBAH USER
@@ -55,18 +53,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-/* =======================
-   HANDLE HAPUS
-======================= */
+//HANDLE HAPUS
 if (isset($_GET['delete'])) {
     $stmt = $conn->prepare("DELETE FROM users WHERE id_user=?");
     $stmt->execute([$_GET['delete']]);
     $message = "User berhasil dihapus";
 }
 
-/* =======================
-   AMBIL DATA USER
-======================= */
+// AMBIL DATA USER
 $users = $conn->query("SELECT * FROM users ORDER BY id_user DESC")->fetchAll();
 ?>
 
@@ -79,7 +73,7 @@ $users = $conn->query("SELECT * FROM users ORDER BY id_user DESC")->fetchAll();
 </head>
 <body>
 
-<!-- ===== SIDEBAR (WAJIB SAMA) ===== -->
+// Sidebar
 <div class="sidebar">
     <h2>AssetFlow</h2>
     <a href="admin_dashboard.php">Dashboard</a>
@@ -97,7 +91,7 @@ $users = $conn->query("SELECT * FROM users ORDER BY id_user DESC")->fetchAll();
         <p style="color:green; font-weight:bold;"><?= $message ?></p>
     <?php endif; ?>
 
-    <!-- ===== FORM TAMBAH USER ===== -->
+    // FORM TAMBAH USER 
     <h2>Tambah User</h2>
     <form method="POST">
         <label>Nama</label>
@@ -125,7 +119,7 @@ $users = $conn->query("SELECT * FROM users ORDER BY id_user DESC")->fetchAll();
 
     <hr>
 
-    <!-- ===== DAFTAR USER ===== -->
+   // DAFTAR USER
     <h2>Daftar User</h2>
     <table>
         <tr>
@@ -161,7 +155,7 @@ $users = $conn->query("SELECT * FROM users ORDER BY id_user DESC")->fetchAll();
     </table>
 </div>
 
-<!-- ===== POPUP EDIT USER ===== -->
+// POPUP EDIT USER
 <div id="editUserForm" style="
     display:none;
     position:fixed;
