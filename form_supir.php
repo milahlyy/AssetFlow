@@ -8,11 +8,16 @@ $my_id = $_SESSION['user_id'];
 $pesan = '';
 
 // Ambil data tugas supir
+// Supir bisa mengisi log selama status 'approved', 'on_loan', atau 'returned' (jika data belum lengkap)
 $stmt = $conn->prepare("
     SELECT l.*, a.nama_aset, a.plat_nomor
     FROM loans l
     JOIN assets a ON l.id_aset = a.id_aset
     WHERE l.id_loan = :id AND l.driver_id = :did
+      AND (
+          l.status_loan IN ('approved', 'on_loan')
+          OR (l.status_loan = 'returned' AND (l.km_awal IS NULL OR l.km_akhir IS NULL OR l.kondisi_mobil IS NULL))
+      )
 ");
 $stmt->bindParam(':id', $id_loan);
 $stmt->bindParam(':did', $my_id);

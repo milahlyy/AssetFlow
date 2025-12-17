@@ -8,6 +8,7 @@ $user_id = $_SESSION['user_id'];
 $nama = $_SESSION['nama'];
 
 // Query: Aset yang sedang dipinjam (status on_loan ATAU approved yang tanggal pinjam sudah tiba)
+// Ambil semua field yang diperlukan untuk cek log (jam_keluar, jam_masuk, km_awal, km_akhir, kondisi_mobil, driver_id)
 $query_sedang_pinjam = "SELECT l.*, a.nama_aset, a.kategori, a.plat_nomor, a.gambar
                         FROM loans l
                         JOIN assets a ON l.id_aset = a.id_aset
@@ -41,20 +42,73 @@ $menunggu = $stmt_menunggu->fetchAll();
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kembalikan'])) {
     $id_loan = $_POST['id_loan'];
     
-    // Validasi: Pastikan loan milik user ini dan status on_loan atau approved (yang sudah tiba)
-    $check = $conn->prepare("SELECT id_loan FROM loans WHERE id_loan = :id AND id_user = :user_id AND (status_loan = 'on_loan' OR (status_loan = 'approved' AND tgl_pinjam <= CURDATE()))");
+    // Ambil data loan beserta kategori asset
+    $check = $conn->prepare("
+        SELECT l.*, a.kategori 
+        FROM loans l 
+        JOIN assets a ON l.id_aset = a.id_aset 
+        WHERE l.id_loan = :id 
+        AND l.id_user = :user_id 
+        AND (l.status_loan = 'on_loan' OR (l.status_loan = 'approved' AND l.tgl_pinjam <= CURDATE()))
+    ");
     $check->bindParam(':id', $id_loan);
     $check->bindParam(':user_id', $user_id);
     $check->execute();
+    $loan_data = $check->fetch();
     
-    if ($check->fetch()) {
-        // Update status menjadi returned
-        $update = $conn->prepare("UPDATE loans SET status_loan = 'returned' WHERE id_loan = :id");
-        $update->bindParam(':id', $id_loan);
-        $update->execute();
-        
-        header("Location: index.php?success=kembali");
-        exit();
+    if ($loan_data) {
+        // Jika asset adalah mobil, cek kelengkapan log
+        if ($loan_data['kategori'] == 'mobil') {
+            $log_lengkap = true;
+            $log_kurang = [];
+            
+            // Cek log satpam
+            if (empty($loan_data['jam_keluar'])) {
+                $log_lengkap = false;
+                $log_kurang[] = "Jam Keluar (Satpam)";
+            }
+            if (empty($loan_data['jam_masuk'])) {
+                $log_lengkap = false;
+                $log_kurang[] = "Jam Masuk (Satpam)";
+            }
+            
+            // Cek log supir (jika ada driver_id, berarti perlu supir)
+            if (!empty($loan_data['driver_id'])) {
+                if (empty($loan_data['km_awal'])) {
+                    $log_lengkap = false;
+                    $log_kurang[] = "KM Awal (Supir)";
+                }
+                if (empty($loan_data['km_akhir'])) {
+                    $log_lengkap = false;
+                    $log_kurang[] = "KM Akhir (Supir)";
+                }
+                if (empty($loan_data['kondisi_mobil'])) {
+                    $log_lengkap = false;
+                    $log_kurang[] = "Kondisi Mobil (Supir)";
+                }
+            }
+            
+            // Jika log belum lengkap, tampilkan error
+            if (!$log_lengkap) {
+                $error = "Tidak dapat mengembalikan aset. Log belum lengkap. Data yang masih kurang: " . implode(", ", $log_kurang);
+            } else {
+                // Semua log sudah lengkap, update status menjadi returned
+                $update = $conn->prepare("UPDATE loans SET status_loan = 'returned' WHERE id_loan = :id");
+                $update->bindParam(':id', $id_loan);
+                $update->execute();
+                
+                header("Location: index.php?success=kembali");
+                exit();
+            }
+        } else {
+            // Bukan mobil, langsung bisa dikembalikan tanpa perlu log
+            $update = $conn->prepare("UPDATE loans SET status_loan = 'returned' WHERE id_loan = :id");
+            $update->bindParam(':id', $id_loan);
+            $update->execute();
+            
+            header("Location: index.php?success=kembali");
+            exit();
+        }
     } else {
         $error = "Gagal mengembalikan aset. Data tidak valid.";
     }
@@ -125,9 +179,43 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kembalikan'])) {
                         <td><?= date('d/m/Y', strtotime($item['tgl_kembali'])) ?></td>
                         <td><?= htmlspecialchars($item['keterangan']) ?></td>
                         <td>
+                            <?php 
+                            // Cek jika mobil dan log belum lengkap
+                            $log_belum_lengkap = false;
+                            $log_info = [];
+                            if ($item['kategori'] == 'mobil') {
+                                if (empty($item['jam_keluar'])) {
+                                    $log_belum_lengkap = true;
+                                    $log_info[] = "Jam Keluar";
+                                }
+                                if (empty($item['jam_masuk'])) {
+                                    $log_belum_lengkap = true;
+                                    $log_info[] = "Jam Masuk";
+                                }
+                                if (!empty($item['driver_id'])) {
+                                    if (empty($item['km_awal'])) {
+                                        $log_belum_lengkap = true;
+                                        $log_info[] = "KM Awal";
+                                    }
+                                    if (empty($item['km_akhir'])) {
+                                        $log_belum_lengkap = true;
+                                        $log_info[] = "KM Akhir";
+                                    }
+                                    if (empty($item['kondisi_mobil'])) {
+                                        $log_belum_lengkap = true;
+                                        $log_info[] = "Kondisi";
+                                    }
+                                }
+                            }
+                            ?>
+                            <?php if ($log_belum_lengkap): ?>
+                                <small style="color: #FF8C00; display: block; margin-bottom: 5px;">
+                                    <strong>Log belum lengkap:</strong> <?= implode(", ", $log_info) ?>
+                                </small>
+                            <?php endif; ?>
                             <form method="POST" style="display: inline;" onsubmit="return confirm('Yakin ingin mengembalikan aset ini?');">
                                 <input type="hidden" name="id_loan" value="<?= $item['id_loan'] ?>">
-                                <button type="submit" name="kembalikan" class="btn btn-return">Kembalikan</button>
+                                <button type="submit" name="kembalikan" class="btn btn-return" <?= $log_belum_lengkap ? 'title="Log belum lengkap, pengembalian mungkin gagal"' : '' ?>>Kembalikan</button>
                             </form>
                         </td>
                     </tr>

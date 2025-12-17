@@ -48,15 +48,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Logic Status: 
     // 1. Jika jam keluar terisi dan status masih 'approved', ubah ke 'on_loan'
-    // 2. Jika jam masuk terisi dan status masih 'on_loan', ubah ke 'returned' (mobil sudah kembali)
+    // 2. Status TIDAK langsung jadi 'returned' saat jam masuk diisi
+    //    Status 'returned' hanya bisa diubah setelah semua data lengkap (dari form pegawai atau admin)
     $sql_status = "";
     if (!empty($final_jam_keluar) && $data['status_loan'] == 'approved') {
         // Mobil baru keluar
         $sql_status = ", status_loan = 'on_loan'";
-    } elseif (!empty($final_jam_masuk) && $data['status_loan'] == 'on_loan') {
-        // Mobil sudah kembali (jam masuk diisi)
-        $sql_status = ", status_loan = 'returned'";
     }
+    // Catatan: Status tetap 'on_loan' meskipun jam masuk sudah diisi
+    // Supir masih bisa mengisi log (km_awal, km_akhir, kondisi_mobil)
+    // Status 'returned' akan diubah oleh pegawai saat klik "Kembalikan" atau admin
 
     // Query Update
     $query = "UPDATE loans SET jam_keluar = :jk, jam_masuk = :jm $sql_status WHERE id_loan = :id";

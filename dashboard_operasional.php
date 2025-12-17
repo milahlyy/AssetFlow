@@ -42,13 +42,18 @@ $userId = $_SESSION['user_id'];
         <p>Silakan update jam keluar jika mobil berangkat, atau jam masuk jika mobil kembali.</p>
 
         <?php
-        // Logic Satpam: Ditambahkan l.keterangan di SELECT
+        // Logic Satpam: Satpam bisa update log untuk status 'approved', 'on_loan', atau 'returned'
+        // (jika data belum lengkap: jam_keluar atau jam_masuk masih kosong)
         $query = "SELECT l.id_loan, l.status_loan, l.jam_keluar, l.jam_masuk, l.keterangan,
                          a.nama_aset, a.plat_nomor, u.nama as peminjam 
                   FROM loans l
                   JOIN assets a ON l.id_aset = a.id_aset
                   JOIN users u ON l.id_user = u.id_user
-                  WHERE a.kategori = 'mobil' AND l.status_loan IN ('approved', 'on_loan')
+                  WHERE a.kategori = 'mobil' 
+                    AND (
+                        l.status_loan IN ('approved', 'on_loan')
+                        OR (l.status_loan = 'returned' AND (l.jam_keluar IS NULL OR l.jam_masuk IS NULL))
+                    )
                   ORDER BY l.status_loan ASC";
         $stmt = $conn->prepare($query);
         $stmt->execute();
@@ -71,10 +76,11 @@ $userId = $_SESSION['user_id'];
                     <?php echo $row['plat_nomor']; ?>
                 </td>
                 <td><?php echo $row['peminjam']; ?></td>
-                <td><?php echo htmlspecialchars($row['keterangan']); ?></td> <td>
+                <td><?php echo htmlspecialchars($row['keterangan']); ?></td>                 <td>
                     <?php 
                     if($row['status_loan'] == 'approved') echo "Belum Berangkat";
-                    if($row['status_loan'] == 'on_loan') echo "Sedang Diluar";
+                    elseif($row['status_loan'] == 'on_loan') echo "Sedang Diluar";
+                    elseif($row['status_loan'] == 'returned') echo "Sudah Kembali (Data Belum Lengkap)";
                     ?>
                 </td>
                 <td><?php echo $row['jam_keluar'] ? $row['jam_keluar'] : '-'; ?></td>
@@ -92,13 +98,18 @@ $userId = $_SESSION['user_id'];
         <p>Silakan update KM Awal sebelum berangkat dan KM Akhir setelah pulang.</p>
 
         <?php
-        // Logic Supir: Ditambahkan l.keterangan di SELECT
+        // Logic Supir: Supir bisa mengisi log selama status 'approved', 'on_loan', atau 'returned' 
+        // (jika data belum lengkap: km_awal, km_akhir, atau kondisi_mobil masih kosong)
         $query = "SELECT l.id_loan, l.tgl_pinjam, l.km_awal, l.km_akhir, l.kondisi_mobil, l.keterangan,
-                         a.nama_aset, a.plat_nomor, u.nama as peminjam
+                         a.nama_aset, a.plat_nomor, u.nama as peminjam, l.status_loan
                   FROM loans l
                   JOIN assets a ON l.id_aset = a.id_aset
                   JOIN users u ON l.id_user = u.id_user
-                  WHERE l.driver_id = :my_id AND l.status_loan IN ('approved', 'on_loan')
+                  WHERE l.driver_id = :my_id 
+                    AND (
+                        l.status_loan IN ('approved', 'on_loan')
+                        OR (l.status_loan = 'returned' AND (l.km_awal IS NULL OR l.km_akhir IS NULL OR l.kondisi_mobil IS NULL))
+                    )
                   ORDER BY l.tgl_pinjam ASC";
         $stmt = $conn->prepare($query);
         $stmt->bindParam(':my_id', $userId);
