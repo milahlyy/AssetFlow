@@ -122,3 +122,21 @@ ALTER TABLE `loans`
   ADD CONSTRAINT `loans_ibfk_3` FOREIGN KEY (`driver_id`) REFERENCES `users` (`id_user`) ON DELETE SET NULL;
 
 COMMIT;
+
+-- SKENARIO 1: BARU DISETUJUI (Siap Berangkat)
+-- Satpam: Perlu isi Jam Keluar.
+-- Supir: Perlu isi KM Awal (KM Keluar).
+INSERT INTO loans (id_loan, id_user, id_aset, driver_id, tgl_pinjam, tgl_kembali, jam_keluar, jam_masuk, km_awal, km_akhir, kondisi_mobil, keterangan, status_loan) VALUES
+(1, 2, 1, 4, CURDATE(), CURDATE() + INTERVAL 1 DAY, NULL, NULL, NULL, NULL, NULL, 'Dinas ke Bandung (Siap Berangkat)', 'approved');
+
+-- SKENARIO 2: SEDANG BERJALAN (Sudah Keluar)
+-- Sudah ada Jam Keluar (08:00) dan KM Awal (50000).
+-- Satpam: Perlu isi Jam Masuk (Saat pulang).
+-- Supir: Perlu isi KM Akhir (KM Masuk).
+INSERT INTO loans (id_loan, id_user, id_aset, driver_id, tgl_pinjam, tgl_kembali, jam_keluar, jam_masuk, km_awal, km_akhir, kondisi_mobil, keterangan, status_loan) VALUES
+(2, 2, 2, 4, CURDATE(), CURDATE(), CONCAT(CURDATE(), ' 08:00:00'), NULL, 50000, NULL, 'Bodi mulus, bensin full', 'Meeting di Jakarta (Sedang Jalan)', 'on_loan');
+
+INSERT INTO assets (id_aset, nama_aset, kategori, plat_nomor, status_aset, gambar) VALUES
+(5, 'Iphone 17', 'elektronik', NULL, 'tersedia', 'Iphone.jpg'),
+(6, 'Kamera Canon', 'elektronik', NULL, 'maintenance', 'canon.jpg'),
+(7, 'Kamera Olympus', 'elektronik', NULL, 'tersedia', 'olympus.jpg');
