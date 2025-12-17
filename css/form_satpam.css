@@ -1,0 +1,134 @@
+/* ======================
+   RESET
+====================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f5f6fa;
+    padding: 40px;
+}
+
+/* ======================
+   CONTAINER FORM
+====================== */
+body > h2 {
+    color: #64FFDA;
+    background-color: #0A192F;
+    padding: 18px 30px;
+    border-radius: 14px;
+    font-size: 24px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* tombol balik */
+a {
+    display: inline-block;
+    margin-bottom: 20px;
+    color: #FF8C00;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* ======================
+   ALERT
+====================== */
+p {
+    margin: 12px 0;
+}
+
+p[style*="green"] {
+    background-color: #E6FFFA;
+    color: #065F46;
+    padding: 10px 14px;
+    border-left: 4px solid #10B981;
+    border-radius: 6px;
+}
+
+p[style*="red"] {
+    background-color: #FEE2E2;
+    color: #991B1B;
+    padding: 10px 14px;
+    border-left: 4px solid #EF4444;
+    border-radius: 6px;
+}
+
+/* ======================
+   INFO KENDARAAN
+====================== */
+table {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 15px 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+table td {
+    padding: 6px 10px;
+    color: #1F2933;
+}
+
+/* ======================
+   FORM
+====================== */
+form {
+    background-color: #ffffff;
+    padding: 25px 30px;
+    border-radius: 14px;
+    max-width: 520px;
+    box-shadow: 0 6px 10px rgba(0,0,0,0.08);
+}
+
+label {
+    color: #0A192F;
+    font-weight: bold;
+}
+
+input[type="datetime-local"] {
+    margin-top: 6px;
+    margin-bottom: 6px;
+    padding: 10px 12px;
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid #CBD5E1;
+    font-size: 14px;
+}
+
+input[type="datetime-local"]:focus {
+    outline: none;
+    border-color: #FF8C00;
+    box-shadow: 0 0 0 2px rgba(255,140,0,0.2);
+}
+
+small {
+    color: #6B7280;
+}
+
+/* ======================
+   BUTTON
+====================== */
+button {
+    margin-top: 20px;
+    padding: 12px 22px;
+    background-color: #FF8C00;
+    color: #ffffff;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+button:hover {
+    background-color: #e67600;
+}

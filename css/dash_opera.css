@@ -1,0 +1,152 @@
+/* ======================
+   RESET & GLOBAL
+====================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f5f6fa;
+    display: flex;
+}
+
+/* ======================
+   SIDEBAR (DISAMAIN)
+====================== */
+.sidebar {
+    width: 240px;
+    min-height: 100vh;
+    background-color: #0A192F; /* navy */
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar h2 {
+    color: #64FFDA; 
+    font-size: 26px;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 40px;
+    letter-spacing: 2px;
+}
+
+.sidebar a {
+    display: block;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+/* hover sama persis */
+.sidebar a:hover {
+    background-color: #112240;
+    transform: translateX(5px);
+}
+
+.sidebar .logout {
+    margin-top: auto;
+    border: 1px solid #FF8C00;
+    color: #FF8C00;
+    text-align: center;
+}
+
+.sidebar .logout:hover {
+    background-color: #FF8C00;
+    color: #FFFFFF;
+}
+
+/* ======================
+   MAIN CONTENT
+====================== */
+.main-content {
+    flex: 1;
+    padding: 30px;
+}
+
+h1 {
+    color: #64FFDA;
+    background-color: #0A192F;
+    padding: 20px 30px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    font-size: 26px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* ======================
+   HEADER HALAMAN
+====================== */
+.page-header {
+    border-bottom: 2px solid #000;
+    padding-bottom: 12px;
+    margin-bottom: 24px;
+}
+
+.page-header h1 {
+    margin-bottom: 6px;
+}
+
+.page-header p {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+/* ======================
+    TABEL
+====================== */
+table {
+    border-collapse: collapse;
+    background-color: #ffffff;
+    margin-top: 15px;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    margin-top: 15px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Header tabel */
+table th {
+    background-color: #FFF4E5; 
+    color: #0A192F;
+    font-weight: 600;
+    text-align: center;
+    border-bottom: 2px solid #FF8C00;
+}
+
+/* Isi tabel */
+table td {
+    border-bottom: 1px solid #E5E7EB;
+    color: #1F2933;
+}
+
+table td a {
+    color: #FF8C00;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+table td a:hover {
+    text-decoration: underline;
+}

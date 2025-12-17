@@ -1,0 +1,114 @@
+/* ======================
+   RESET & GLOBAL
+====================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f5f6fa;
+    display: flex;
+}
+
+/* ======================
+   SIDEBAR (SAMA PERSIS FIKS)
+====================== */
+.sidebar {
+    width: 240px;
+    min-height: 100vh;
+    background-color: #0A192F;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar h2 {
+    color: #64FFDA;
+    font-size: 26px;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 40px;
+    letter-spacing: 2px;
+}
+
+.sidebar a {
+    display: block;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    background-color: #112240;
+    transform: translateX(5px);
+}
+
+.sidebar .logout {
+    margin-top: auto;
+    border: 1px solid #FF8C00;
+    color: #FF8C00;
+    text-align: center;
+}
+
+.sidebar .logout:hover {
+    background-color: #FF8C00;
+    color: #ffffff;
+}
+
+/* ======================
+   MAIN CONTENT
+====================== */
+.main-content {
+    flex: 1;
+    padding: 30px;
+}
+
+/* ======================
+   H1 (SAMA PERSIS FIKS)
+====================== */
+h1 {
+    color: #64FFDA;
+    background-color: #0A192F;
+    padding: 20px 30px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    font-size: 26px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* ======================
+   TABEL RIWAYAT
+====================== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+th {
+    background-color: #FFF4E5;
+    color: #0A192F;
+    border-bottom: 2px solid #FF8C00;
+    padding: 12px;
+    text-align: center;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid #E5E7EB;
+    color: #1F2933;
+    text-align: center;
+}
+
+tr:hover {
+    background-color: #FAFAFA;
+}

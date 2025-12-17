@@ -35,11 +35,21 @@ $result = $stmt->fetchAll();
 <html>
 <head>
     <title>Riwayat Operasional</title>
+    <link rel="stylesheet" href="css/riwayat.css">
 </head>
 <body>
-    <h2>Riwayat Operasional (<?php echo ucfirst($role); ?>)</h2>
-    <a href="dashboard_operasional.php">&laquo; Kembali ke Dashboard</a>
-    <hr>
+    <div class="sidebar">
+    <h2><?php echo strtoupper($role); ?></h2>
+
+    <a href="dashboard_operasional.php" class="active">Dashboard</a>
+    <a href="galeri_mobil.php">Galeri Mobil</a>
+    <a href="riwayat.php">Riwayat Log</a>
+
+    <a href="logout.php" class="logout">Logout</a>
+</div>
+
+<div class="main-content">
+        <h1>Riwayat Operasional</h1>
     
     <table border="1" cellpadding="5" cellspacing="0" width="100%">
         <thead>

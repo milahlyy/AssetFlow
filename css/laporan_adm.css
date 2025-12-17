@@ -50,6 +50,7 @@ body {
 
 .sidebar a:hover {
     background-color: #1C2A44;
+    transform: translateX(5px);
 }
 
 .sidebar .logout {

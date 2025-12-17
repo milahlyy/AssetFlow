@@ -14,17 +14,27 @@ $userId = $_SESSION['user_id'];
 <html>
 <head>
     <title>Dashboard Operasional</title>
+    <link rel="stylesheet" href="css/dash_opera.css">
+</head>
 </head>
 <body>
-    <div style="border-bottom: 2px solid black; padding-bottom: 10px; margin-bottom: 20px;">
+
+<div class="sidebar">
+    <h2><?php echo strtoupper($role); ?></h2>
+
+    <a href="dashboard_operasional.php" class="active">Dashboard</a>
+    <a href="galeri_mobil.php">Galeri Mobil</a>
+    <a href="riwayat.php">Riwayat Log</a>
+
+    <a href="logout.php" class="logout">Logout</a>
+</div>
+
+<div class="main-content">
+
+    <div class="page-header">
         <h1>Dashboard <?php echo ucfirst($role); ?></h1>
-        <p>Halo, <strong><?php echo $nama; ?></strong> | <a href="logout.php">Logout</a></p>
+        <p>Halo, <strong><?php echo $nama; ?></strong></p>
         
-        <nav>
-            <a href="dashboard_operasional.php"><b>Home</b></a> | 
-            <a href="galeri_mobil.php">Galeri Mobil</a> | 
-            <a href="riwayat.php">Riwayat Log</a>
-        </nav>
     </div>
 
     <?php if ($role == 'satpam'): ?>

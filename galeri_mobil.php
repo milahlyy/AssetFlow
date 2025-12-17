@@ -4,6 +4,7 @@ require_once 'database/db.php';
 
 // Pastikan hanya Satpam dan Supir yang bisa akses
 checkrole(['satpam', 'supir']);
+$role = $_SESSION['role'];
 
 
 // Ambil semua data mobil
@@ -13,6 +14,8 @@ $list = $conn->query("SELECT * FROM assets WHERE kategori='mobil'")->fetchAll();
 <html>
 <head>
     <title>Galeri Mobil</title>
+    <link rel="stylesheet" href="css/galeri_mobil.css">
+
     <style>
         /* Style agar link nama mobil terlihat jelas */
         a.nama-mobil {
@@ -26,9 +29,22 @@ $list = $conn->query("SELECT * FROM assets WHERE kategori='mobil'")->fetchAll();
     </style>
 </head>
 <body>
-    <h2>Galeri Mobil Kantor</h2>
-    <a href="dashboard_operasional.php">&laquo; Kembali ke Dashboard</a>
-    <hr>
+<div class="sidebar">
+    <h2><?php echo strtoupper($role); ?></h2>
+
+    <a href="dashboard_operasional.php">Dashboard</a>
+    <a href="galeri_mobil.php">Galeri Mobil</a>
+    <a href="riwayat.php">Riwayat Log</a>
+
+    <a href="logout.php" class="logout">Logout</a>
+</div>
+
+<div class="main-content">
+
+    <div class="page-header">
+        <h1>Dashboard <?php echo ucfirst($role); ?></h1>
+        <h2>Galeri Mobil Kantor</h2>
+    </div>
 
     <table border="1" cellpadding="10" cellspacing="0" width="100%">
         <thead>

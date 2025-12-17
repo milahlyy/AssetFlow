@@ -71,6 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <!DOCTYPE html>
 <html>
 <head><title>Form Satpam</title></head>
+<link rel="stylesheet" href="css/form_satpam.css">
 <body>
     <h2>Form Keamanan</h2>
     <a href="dashboard_operasional.php">&laquo; Kembali ke Dashboard</a>
