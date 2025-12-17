@@ -15,18 +15,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Upload gambar
         $gambar_name = null;
         if ($_FILES['gambar']['error'] == 0) {
-            $allowed_ext = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
-            
-            $ext = strtolower(pathinfo($_FILES['gambar']['name'], PATHINFO_EXTENSION));
-
-            if (in_array($ext, $allowed_ext)) {
-                $gambar_name = uniqid() . '.' . $ext;
-                move_uploaded_file($_FILES['gambar']['tmp_name'], 'assets/img/' . $gambar_name);
-            } else {
-                echo "Format file tidak diizinkan!";
-            }
+            $gambar_name = uniqid() . '_' . $_FILES['gambar']['name'];
+            move_uploaded_file($_FILES['gambar']['tmp_name'], 'assets/img/' . $gambar_name);
         }
-
         
         $stmt = $conn->prepare("INSERT INTO assets (nama_aset, kategori, plat_nomor, status_aset, gambar) VALUES (?, ?, ?, ?, ?)");
         $stmt->execute([$nama_aset, $kategori, $plat_nomor, $status_aset, $gambar_name]);
