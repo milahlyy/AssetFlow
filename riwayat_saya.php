@@ -58,7 +58,6 @@ $riwayat = $stmt->fetchAll();
     <div class="main-content">
         <div class="header">
             <h1>Riwayat Peminjaman Saya</h1>
-            <p class="welcome">Selamat datang, <strong><?= htmlspecialchars($nama) ?></strong></p>
         </div>
 
         <!-- Filter Status -->

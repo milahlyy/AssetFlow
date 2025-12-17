@@ -39,7 +39,7 @@ $result = $stmt->fetchAll();
 </head>
 <body>
     <div class="sidebar">
-    <h2><?php echo strtoupper($role); ?></h2>
+    <h2>AssetFlow</h2>
 
     <a href="dashboard_operasional.php" class="active">Dashboard</a>
     <a href="galeri_mobil.php">Galeri Mobil</a>

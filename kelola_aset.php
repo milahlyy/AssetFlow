@@ -67,7 +67,7 @@ $assets = $conn->query("SELECT * FROM assets ORDER BY id_aset DESC")->fetchAll()
 <body>
 
     <div class="sidebar">
-        <h2>HRGA</h2>
+        <h2>AssetFlow</h2>
         <a href="admin_dashboard.php">Dashboard</a>
         <a href="kelola_aset.php">Kelola Aset</a>
         <a href="persetujuan.php">Persetujuan Peminjaman</a>

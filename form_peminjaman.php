@@ -119,7 +119,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div class="main-content">
         <div class="header">
             <h1>Form Peminjaman Aset</h1>
-            <p class="welcome">Selamat datang, <strong><?= htmlspecialchars($nama) ?></strong></p>
         </div>
 
         <div class="card">
