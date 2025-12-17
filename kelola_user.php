@@ -72,7 +72,7 @@ $users = $conn->query("SELECT * FROM users ORDER BY id_user DESC")->fetchAll();
 </head>
 <body>
 
-// Sidebar
+
 <div class="sidebar">
     <h2>AssetFlow</h2>
     <a href="admin_dashboard.php">Dashboard</a>
@@ -152,7 +152,6 @@ $users = $conn->query("SELECT * FROM users ORDER BY id_user DESC")->fetchAll();
     </table>
 </div>
 
-// POPUP EDIT USER
 <div id="editUserForm" style="
     display:none;
     position:fixed;
