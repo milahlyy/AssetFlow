@@ -1,5 +1,5 @@
 <?php
-// Riwayat Peminjaman Pegawai - Arsip peminjaman
+// Riwayat Peminjaman Pegawai
 require_once 'database/db.php';
 require_once 'auth_check.php';
 checkrole(['pegawai']);

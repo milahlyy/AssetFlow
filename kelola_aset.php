@@ -190,7 +190,6 @@ $assets = $conn->query("SELECT * FROM assets ORDER BY id_aset DESC")->fetchAll()
  
     function editAset(id, nama, kategori, plat, status) {
         document.getElementById('editForm').style.display = 'block';
-        
         document.getElementById('edit_id').value = id;
         document.getElementById('edit_nama').value = nama;
         document.getElementById('edit_kategori').value = kategori;

@@ -107,7 +107,6 @@ $recent_pending = $conn->query("
             <div class="box-container">
                 <h2>Aktivitas Terbaru</h2>
                 <?php
-                // Query asli kamu tidak saya ubah
                 $recent_activities = $conn->query("
                     SELECT l.*, u.nama as pemohon, a.nama_aset 
                     FROM loans l 
