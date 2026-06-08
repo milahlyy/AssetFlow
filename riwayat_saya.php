@@ -91,19 +91,17 @@ $riwayat = $stmt->fetchAll();
                             <td><?= $no++ ?></td>
                             <td>
                                 <div class="asset-info">
-                                    <?php if ($item['gambar']): ?>
-                                        <img src="assets/img/<?= htmlspecialchars($item['gambar']) ?>" alt="<?= htmlspecialchars($item['nama_aset']) ?>" class="asset-thumb">
-                                    <?php endif; ?>
-                                    <span><?= htmlspecialchars($item['nama_aset']) ?></span>
+                                    <img src="<?= e(asset_image_src($item['gambar'])) ?>" alt="<?= e($item['nama_aset']) ?>" class="asset-thumb">
+                                    <span><?= e($item['nama_aset']) ?></span>
                                     <?php if ($item['plat_nomor']): ?>
-                                        <br><small>(<?= htmlspecialchars($item['plat_nomor']) ?>)</small>
+                                        <br><small>(<?= e($item['plat_nomor']) ?>)</small>
                                     <?php endif; ?>
                                 </div>
                             </td>
-                            <td><span class="badge badge-<?= $item['kategori'] ?>"><?= ucfirst($item['kategori']) ?></span></td>
+                            <td><span class="badge badge-<?= e($item['kategori']) ?>"><?= e(ucfirst($item['kategori'])) ?></span></td>
                             <td><?= date('d/m/Y', strtotime($item['tgl_pinjam'])) ?></td>
                             <td><?= date('d/m/Y', strtotime($item['tgl_kembali'])) ?></td>
-                            <td><?= htmlspecialchars($item['keterangan']) ?></td>
+                            <td><?= e($item['keterangan']) ?></td>
                             <td>
                                 <?php
                                 $status_class = '';
@@ -131,10 +129,10 @@ $riwayat = $stmt->fetchAll();
                                         break;
                                 }
                                 ?>
-                                <span class="badge badge-<?= $status_class ?>"><?= $status_text ?></span>
+                                <span class="badge badge-<?= e($status_class) ?>"><?= e($status_text) ?></span>
                                 <?php if ($item['alasan_penolakan']): ?>
                                     <br><small style="color: #dc3545; display: block; margin-top: 5px;">
-                                        <strong>Alasan:</strong> <?= htmlspecialchars($item['alasan_penolakan']) ?>
+                                        <strong>Alasan:</strong> <?= e($item['alasan_penolakan']) ?>
                                     </small>
                                 <?php endif; ?>
                             </td>
@@ -150,8 +148,13 @@ $riwayat = $stmt->fetchAll();
                                         <small>KM Awal: <?= number_format($item['km_awal']) ?></small><br>
                                     <?php endif; ?>
                                     <?php if ($item['km_akhir']): ?>
-                                        <small>KM Akhir: <?= number_format($item['km_akhir']) ?></small>
+                                        <small>KM Akhir: <?= number_format($item['km_akhir']) ?></small><br>
                                     <?php endif; ?>
+                                    <?php if ($item['returned_at']): ?>
+                                        <small>Dikembalikan: <?= date('d/m/Y H:i', strtotime($item['returned_at'])) ?></small>
+                                    <?php endif; ?>
+                                <?php elseif ($item['returned_at']): ?>
+                                    <small>Dikembalikan: <?= date('d/m/Y H:i', strtotime($item['returned_at'])) ?></small>
                                 <?php endif; ?>
                             </td>
                         </tr>

@@ -40,7 +40,9 @@ $menunggu = $stmt_menunggu->fetchAll();
 
 // Handle pengembalian aset
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kembalikan'])) {
-    $id_loan = $_POST['id_loan'];
+    verify_csrf();
+
+    $id_loan = filter_input(INPUT_POST, 'id_loan', FILTER_VALIDATE_INT);
     
     // Ambil data loan beserta kategori asset
     $check = $conn->prepare("
@@ -93,8 +95,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kembalikan'])) {
                 $error = "Tidak dapat mengembalikan aset. Log belum lengkap. Data yang masih kurang: " . implode(", ", $log_kurang);
             } else {
                 // Semua log sudah lengkap, update status menjadi returned
-                $update = $conn->prepare("UPDATE loans SET status_loan = 'returned' WHERE id_loan = :id");
+                $update = $conn->prepare("
+                    UPDATE loans
+                    SET status_loan = 'returned', returned_at = NOW()
+                    WHERE id_loan = :id
+                      AND id_user = :user_id
+                      AND (status_loan = 'on_loan' OR (status_loan = 'approved' AND tgl_pinjam <= CURDATE()))
+                ");
                 $update->bindParam(':id', $id_loan);
+                $update->bindParam(':user_id', $user_id);
                 $update->execute();
                 
                 header("Location: index.php?success=kembali");
@@ -102,8 +111,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kembalikan'])) {
             }
         } else {
             // Bukan mobil, langsung bisa dikembalikan tanpa perlu log
-            $update = $conn->prepare("UPDATE loans SET status_loan = 'returned' WHERE id_loan = :id");
+            $update = $conn->prepare("
+                UPDATE loans
+                SET status_loan = 'returned', returned_at = NOW()
+                WHERE id_loan = :id
+                  AND id_user = :user_id
+                  AND (status_loan = 'on_loan' OR (status_loan = 'approved' AND tgl_pinjam <= CURDATE()))
+            ");
             $update->bindParam(':id', $id_loan);
+            $update->bindParam(':user_id', $user_id);
             $update->execute();
             
             header("Location: index.php?success=kembali");
@@ -134,14 +150,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kembalikan'])) {
 
     <div class="main-content">
         <h1>Dashboard Pegawai</h1>
-        <p class="welcome">Selamat datang, <strong><?= htmlspecialchars($nama) ?></strong></p>
+        <p class="welcome">Selamat datang, <strong><?= e($nama) ?></strong></p>
 
         <?php if (isset($_GET['success']) && $_GET['success'] == 'kembali'): ?>
             <div class="alert alert-success">Aset berhasil dikembalikan!</div>
         <?php endif; ?>
 
         <?php if (isset($error)): ?>
-            <div class="alert alert-error"><?= htmlspecialchars($error) ?></div>
+            <div class="alert alert-error"><?= e($error) ?></div>
         <?php endif; ?>
 
         <!-- Tabel: Sedang Saya Pinjam -->
@@ -165,19 +181,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kembalikan'])) {
                         <td><?= $no++ ?></td>
                             <td>
                                 <div class="asset-info-table">
-                                    <?php if ($item['gambar']): ?>
-                                        <img src="assets/img/<?= htmlspecialchars($item['gambar']) ?>" alt="<?= htmlspecialchars($item['nama_aset']) ?>" class="asset-thumb">
-                                    <?php endif; ?>
-                                    <span><?= htmlspecialchars($item['nama_aset']) ?></span>
+                                    <img src="<?= e(asset_image_src($item['gambar'])) ?>" alt="<?= e($item['nama_aset']) ?>" class="asset-thumb">
+                                    <span><?= e($item['nama_aset']) ?></span>
                                     <?php if ($item['plat_nomor']): ?>
-                                        <small>(<?= htmlspecialchars($item['plat_nomor']) ?>)</small>
+                                        <small>(<?= e($item['plat_nomor']) ?>)</small>
                                     <?php endif; ?>
                                 </div>
                             </td>
-                        <td><span class="badge badge-<?= $item['kategori'] ?>"><?= ucfirst($item['kategori']) ?></span></td>
+                        <td><span class="badge badge-<?= e($item['kategori']) ?>"><?= e(ucfirst($item['kategori'])) ?></span></td>
                         <td><?= date('d/m/Y', strtotime($item['tgl_pinjam'])) ?></td>
                         <td><?= date('d/m/Y', strtotime($item['tgl_kembali'])) ?></td>
-                        <td><?= htmlspecialchars($item['keterangan']) ?></td>
+                        <td><?= e($item['keterangan']) ?></td>
                         <td>
                             <?php 
                             // Cek jika mobil dan log belum lengkap
@@ -214,7 +228,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kembalikan'])) {
                                 </small>
                             <?php endif; ?>
                             <form method="POST" style="display: inline;" onsubmit="return confirm('Yakin ingin mengembalikan aset ini?');">
-                                <input type="hidden" name="id_loan" value="<?= $item['id_loan'] ?>">
+                                <?= csrf_field() ?>
+                                <input type="hidden" name="id_loan" value="<?= e($item['id_loan']) ?>">
                                 <button type="submit" name="kembalikan" class="btn btn-return" <?= $log_belum_lengkap ? 'title="Log belum lengkap, pengembalian mungkin gagal"' : '' ?>>Kembalikan</button>
                             </form>
                         </td>
@@ -245,19 +260,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kembalikan'])) {
                         <td><?= $no++ ?></td>
                             <td>
                                 <div class="asset-info-table">
-                                    <?php if ($item['gambar']): ?>
-                                        <img src="assets/img/<?= htmlspecialchars($item['gambar']) ?>" alt="<?= htmlspecialchars($item['nama_aset']) ?>" class="asset-thumb">
-                                    <?php endif; ?>
-                                    <span><?= htmlspecialchars($item['nama_aset']) ?></span>
+                                    <img src="<?= e(asset_image_src($item['gambar'])) ?>" alt="<?= e($item['nama_aset']) ?>" class="asset-thumb">
+                                    <span><?= e($item['nama_aset']) ?></span>
                                     <?php if ($item['plat_nomor']): ?>
-                                        <small>(<?= htmlspecialchars($item['plat_nomor']) ?>)</small>
+                                        <small>(<?= e($item['plat_nomor']) ?>)</small>
                                     <?php endif; ?>
                                 </div>
                             </td>
-                        <td><span class="badge badge-<?= $item['kategori'] ?>"><?= ucfirst($item['kategori']) ?></span></td>
+                        <td><span class="badge badge-<?= e($item['kategori']) ?>"><?= e(ucfirst($item['kategori'])) ?></span></td>
                         <td><?= date('d/m/Y', strtotime($item['tgl_pinjam'])) ?></td>
                         <td><?= date('d/m/Y', strtotime($item['tgl_kembali'])) ?></td>
-                        <td><?= htmlspecialchars($item['keterangan']) ?></td>
+                        <td><?= e($item['keterangan']) ?></td>
                         <td>
                             <?php if ($item['status_loan'] == 'pending'): ?>
                                 <span class="badge badge-pending">Menunggu</span>
@@ -265,7 +278,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kembalikan'])) {
                                 <span class="badge badge-approved">Disetujui</span>
                             <?php endif; ?>
                             <?php if ($item['alasan_penolakan']): ?>
-                                <br><small style="color: #dc3545; display: block; margin-top: 5px;">Ditolak: <?= htmlspecialchars($item['alasan_penolakan']) ?></small>
+                                <br><small style="color: #dc3545; display: block; margin-top: 5px;">Ditolak: <?= e($item['alasan_penolakan']) ?></small>
                             <?php endif; ?>
                         </td>
                     </tr>
