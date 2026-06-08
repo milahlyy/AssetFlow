@@ -3,9 +3,10 @@ require_once 'auth_check.php';
 require_once 'database/db.php';
 checkrole(['supir']);
 
-$id_loan = $_GET['id_loan'] ?? 0;
+$id_loan = filter_input(INPUT_GET, 'id_loan', FILTER_VALIDATE_INT) ?: 0;
 $my_id = $_SESSION['user_id'];
 $pesan = '';
+$error = '';
 
 // Ambil data tugas supir
 // Supir bisa mengisi log selama status 'approved', 'on_loan', atau 'returned' (jika data belum lengkap)
@@ -33,31 +34,43 @@ if (!$data) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     verify_csrf();
 
-    $km_awal   = $_POST['km_awal'] !== '' ? $_POST['km_awal'] : null;
-    $km_akhir  = $_POST['km_akhir'] !== '' ? $_POST['km_akhir'] : null;
-    $kondisi   = $_POST['kondisi_mobil'];
+    $km_awal_raw = $_POST['km_awal'] ?? '';
+    $km_akhir_raw = $_POST['km_akhir'] ?? '';
+    $km_awal   = $km_awal_raw !== '' ? filter_var($km_awal_raw, FILTER_VALIDATE_INT) : null;
+    $km_akhir  = $km_akhir_raw !== '' ? filter_var($km_akhir_raw, FILTER_VALIDATE_INT) : null;
+    $kondisi   = trim($_POST['kondisi_mobil'] ?? '');
     $id_target = $data['id_loan'];
 
-    $update = $conn->prepare("
-        UPDATE loans 
-        SET km_awal = :ka, km_akhir = :kk, kondisi_mobil = :km
-        WHERE id_loan = :id
-          AND driver_id = :did
-          AND (
-              status_loan IN ('approved', 'on_loan')
-              OR (status_loan = 'returned' AND (km_awal IS NULL OR km_akhir IS NULL OR kondisi_mobil IS NULL))
-          )
-    ");
-    $update->bindParam(':ka', $km_awal);
-    $update->bindParam(':kk', $km_akhir);
-    $update->bindParam(':km', $kondisi);
-    $update->bindParam(':id', $id_target);
-    $update->bindParam(':did', $my_id);
+    if ($km_awal_raw !== '' && $km_awal === false) {
+        $error = "KM awal harus berupa angka.";
+    } elseif ($km_akhir_raw !== '' && $km_akhir === false) {
+        $error = "KM akhir harus berupa angka.";
+    } elseif (($km_awal !== null && $km_awal < 0) || ($km_akhir !== null && $km_akhir < 0)) {
+        $error = "KM tidak boleh bernilai negatif.";
+    } elseif ($km_awal !== null && $km_akhir !== null && $km_akhir < $km_awal) {
+        $error = "KM akhir tidak boleh lebih kecil dari KM awal.";
+    } else {
+        $update = $conn->prepare("
+            UPDATE loans 
+            SET km_awal = :ka, km_akhir = :kk, kondisi_mobil = :km
+            WHERE id_loan = :id
+              AND driver_id = :did
+              AND (
+                  status_loan IN ('approved', 'on_loan')
+                  OR (status_loan = 'returned' AND (km_awal IS NULL OR km_akhir IS NULL OR kondisi_mobil IS NULL))
+              )
+        ");
+        $update->bindParam(':ka', $km_awal);
+        $update->bindParam(':kk', $km_akhir);
+        $update->bindParam(':km', $kondisi);
+        $update->bindParam(':id', $id_target);
+        $update->bindParam(':did', $my_id);
 
-    if ($update->execute()) {
-        $pesan = "Laporan perjalanan tersimpan!";
-        $stmt->execute();
-        $data = $stmt->fetch();
+        if ($update->execute()) {
+            $pesan = "Laporan perjalanan tersimpan!";
+            $stmt->execute();
+            $data = $stmt->fetch();
+        }
     }
 }
 ?>
@@ -78,6 +91,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <?php if ($pesan): ?>
         <div class="success"><?= e($pesan) ?></div>
+    <?php endif; ?>
+
+    <?php if ($error): ?>
+        <div class="success" style="background:#fdecea; color:#b42318;"><?= e($error) ?></div>
     <?php endif; ?>
 
     <div class="info">

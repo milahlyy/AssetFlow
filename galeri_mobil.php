@@ -7,8 +7,8 @@ checkrole(['satpam', 'supir']);
 $role = $_SESSION['role'];
 
 
-// Ambil semua data mobil
-$list = $conn->query("SELECT * FROM assets WHERE kategori='mobil'")->fetchAll();
+// Ambil semua data mobil aktif
+$list = $conn->query("SELECT * FROM assets WHERE kategori='mobil' AND deleted_at IS NULL")->fetchAll();
 ?>
 <!DOCTYPE html>
 <html>
@@ -60,11 +60,7 @@ $list = $conn->query("SELECT * FROM assets WHERE kategori='mobil'")->fetchAll();
             <tr>
                 <td><?php echo $no++; ?></td>
                 <td align="center">
-                    <?php if($m['gambar']): ?>
-                        <img src="assets/img/<?php echo e($m['gambar']); ?>" width="100" style="border:1px solid #ddd; padding:3px;" alt="<?php echo e($m['nama_aset']); ?>">
-                    <?php else: ?>
-                        <span style="color:gray; font-size:12px;">(Tidak ada foto)</span>
-                    <?php endif; ?>
+                    <img src="<?php echo e(asset_image_src($m['gambar'])); ?>" width="100" style="border:1px solid #ddd; padding:3px;" alt="<?php echo e($m['nama_aset']); ?>">
                 </td>
                 <td>
                     <b>

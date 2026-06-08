@@ -16,10 +16,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if (!$id_user) {
             $error = "Data user tidak valid.";
+        } elseif ($id_user == $_SESSION['user_id']) {
+            $error = "User yang sedang login tidak bisa dihapus.";
         } else {
-            $stmt = $conn->prepare("DELETE FROM users WHERE id_user=?");
-            $stmt->execute([$id_user]);
-            $message = "User berhasil dihapus";
+            $active_check = $conn->prepare("
+                SELECT COUNT(*)
+                FROM loans
+                WHERE (id_user = ? OR driver_id = ?)
+                  AND status_loan IN ('pending', 'approved', 'on_loan')
+            ");
+            $active_check->execute([$id_user, $id_user]);
+
+            if ((int) $active_check->fetchColumn() > 0) {
+                $error = "User tidak bisa dihapus karena masih memiliki peminjaman atau tugas aktif.";
+            } else {
+                $stmt = $conn->prepare("UPDATE users SET deleted_at = NOW() WHERE id_user=? AND deleted_at IS NULL");
+                $stmt->execute([$id_user]);
+                $message = $stmt->rowCount() > 0 ? "User berhasil dihapus" : "User sudah dihapus sebelumnya.";
+            }
         }
     }
 
@@ -61,14 +75,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt = $conn->prepare(
                     "UPDATE users
                      SET nama=?, email=?, password=?, role=?, divisi=?
-                     WHERE id_user=?"
+                     WHERE id_user=? AND deleted_at IS NULL"
                 );
                 $stmt->execute([$nama, $email, $password, $role, $divisi, $id_user]);
             } else {
                 $stmt = $conn->prepare(
                     "UPDATE users
                      SET nama=?, email=?, role=?, divisi=?
-                     WHERE id_user=?"
+                     WHERE id_user=? AND deleted_at IS NULL"
                 );
                 $stmt->execute([$nama, $email, $role, $divisi, $id_user]);
             }
@@ -79,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 // AMBIL DATA USER
-$users = $conn->query("SELECT * FROM users ORDER BY id_user DESC")->fetchAll();
+$users = $conn->query("SELECT * FROM users WHERE deleted_at IS NULL ORDER BY id_user DESC")->fetchAll();
 ?>
 
 <!DOCTYPE html>

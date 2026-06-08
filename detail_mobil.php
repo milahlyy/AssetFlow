@@ -4,12 +4,12 @@ require_once 'database/db.php';
 
 checkrole(['satpam', 'supir']);
 
-$id_aset = $_GET['id'] ?? 0;
+$id_aset = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 $my_id = $_SESSION['user_id'];
 $role = $_SESSION['role'];
 
 // Ambil info mobil
-$stmt = $conn->prepare("SELECT * FROM assets WHERE id_aset = :id");
+$stmt = $conn->prepare("SELECT * FROM assets WHERE id_aset = :id AND kategori = 'mobil' AND deleted_at IS NULL");
 $stmt->bindParam(':id', $id_aset);
 $stmt->execute();
 $mobil = $stmt->fetch();
@@ -49,16 +49,12 @@ $active_loan = $stmtLoan->fetch();
 <div class="detail-wrapper">
 
     <div class="mobil-card">
-        <?php if ($mobil['gambar']): ?>
-            <img src="assets/img/<?php echo e($mobil['gambar']); ?>" alt="<?php echo e($mobil['nama_aset']); ?>">
-        <?php else: ?>
-            <div class="no-image">Tidak ada gambar</div>
-        <?php endif; ?>
+        <img src="<?php echo e(asset_image_src($mobil['gambar'])); ?>" alt="<?php echo e($mobil['nama_aset']); ?>">
 
-        <h3><?php echo htmlspecialchars($mobil['nama_aset']); ?></h3>
+        <h3><?php echo e($mobil['nama_aset']); ?></h3>
 
         <p>
-            <strong>Plat Nomor:</strong> <?php echo htmlspecialchars($mobil['plat_nomor']); ?><br>
+            <strong>Plat Nomor:</strong> <?php echo e($mobil['plat_nomor']); ?><br>
             <strong>Kategori:</strong> <?php echo e(strtoupper($mobil['kategori'])); ?><br>
             <strong>Status Aset:</strong> <?php echo e(strtoupper($mobil['status_aset'])); ?>
         </p>
@@ -80,15 +76,15 @@ $active_loan = $stmtLoan->fetch();
                 </tr>
                 <tr>
                     <td>Peminjam</td>
-                    <td><?php echo htmlspecialchars($active_loan['peminjam']); ?></td>
+                <td><?php echo e($active_loan['peminjam']); ?></td>
                 </tr>
                 <tr>
                     <td>Keperluan</td>
-                    <td><?php echo htmlspecialchars($active_loan['keterangan']); ?></td>
+                    <td><?php echo e($active_loan['keterangan']); ?></td>
                 </tr>
                 <tr>
                     <td>Supir</td>
-                    <td><?php echo htmlspecialchars($active_loan['supir'] ?? 'Tanpa Supir'); ?></td>
+                    <td><?php echo e($active_loan['supir'] ?? 'Tanpa Supir'); ?></td>
                 </tr>
                 <tr>
                     <td>Jadwal</td>

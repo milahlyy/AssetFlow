@@ -56,6 +56,28 @@ function upload_asset_image($field_name, &$error) {
     return $gambar_name;
 }
 
+function delete_unused_asset_image_file($gambar, PDO $conn) {
+    if (!is_string($gambar) || $gambar === '' || $gambar === 'placeholder.svg') {
+        return;
+    }
+
+    $basename = basename($gambar);
+    if ($basename !== $gambar) {
+        return;
+    }
+
+    $stmt = $conn->prepare("SELECT COUNT(*) FROM assets WHERE gambar = ?");
+    $stmt->execute([$basename]);
+    if ((int) $stmt->fetchColumn() > 0) {
+        return;
+    }
+
+    $path = __DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'img' . DIRECTORY_SEPARATOR . $basename;
+    if (is_file($path)) {
+        unlink($path);
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     verify_csrf();
 
@@ -65,9 +87,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (!$id_aset) {
             $error = "Data aset tidak valid.";
         } else {
-            $stmt = $conn->prepare("DELETE FROM assets WHERE id_aset = ?");
-            $stmt->execute([$id_aset]);
-            $message = "Aset berhasil dihapus";
+            $active_check = $conn->prepare("
+                SELECT COUNT(*)
+                FROM loans
+                WHERE id_aset = ?
+                  AND status_loan IN ('pending', 'approved', 'on_loan')
+            ");
+            $active_check->execute([$id_aset]);
+
+            if ((int) $active_check->fetchColumn() > 0) {
+                $error = "Aset tidak bisa dihapus karena masih memiliki peminjaman aktif.";
+            } else {
+                $stmt = $conn->prepare("UPDATE assets SET deleted_at = NOW() WHERE id_aset = ? AND deleted_at IS NULL");
+                $stmt->execute([$id_aset]);
+                $message = $stmt->rowCount() > 0 ? "Aset berhasil dihapus" : "Aset sudah dihapus sebelumnya.";
+            }
         }
     }
 
@@ -93,12 +127,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     if (!$id_aset) {
                         $error = "Data aset tidak valid.";
-                    } elseif ($gambar_name !== null) {
-                        $stmt = $conn->prepare("UPDATE assets SET nama_aset=?, kategori=?, plat_nomor=?, status_aset=?, gambar=? WHERE id_aset=?");
-                        $stmt->execute([$nama_aset, $kategori, $plat_nomor, $status_aset, $gambar_name, $id_aset]);
-                        $message = "Aset berhasil diperbarui";
+                        if ($gambar_name !== null) {
+                            delete_unused_asset_image_file($gambar_name, $conn);
+                        }
                     } else {
-                        $stmt = $conn->prepare("UPDATE assets SET nama_aset=?, kategori=?, plat_nomor=?, status_aset=? WHERE id_aset=?");
+                        $old_stmt = $conn->prepare("SELECT gambar FROM assets WHERE id_aset = ? AND deleted_at IS NULL");
+                        $old_stmt->execute([$id_aset]);
+                        $old_gambar = $old_stmt->fetchColumn();
+                    }
+
+                    if (!$error && $old_gambar === false) {
+                        $error = "Aset tidak ditemukan atau sudah dihapus.";
+                        if ($gambar_name !== null) {
+                            delete_unused_asset_image_file($gambar_name, $conn);
+                        }
+                    } elseif (!$error && $gambar_name !== null) {
+                        $stmt = $conn->prepare("UPDATE assets SET nama_aset=?, kategori=?, plat_nomor=?, status_aset=?, gambar=? WHERE id_aset=? AND deleted_at IS NULL");
+                        $stmt->execute([$nama_aset, $kategori, $plat_nomor, $status_aset, $gambar_name, $id_aset]);
+                        if ($stmt->rowCount() > 0) {
+                            delete_unused_asset_image_file($old_gambar, $conn);
+                        }
+                        $message = "Aset berhasil diperbarui";
+                    } elseif (!$error) {
+                        $stmt = $conn->prepare("UPDATE assets SET nama_aset=?, kategori=?, plat_nomor=?, status_aset=? WHERE id_aset=? AND deleted_at IS NULL");
                         $stmt->execute([$nama_aset, $kategori, $plat_nomor, $status_aset, $id_aset]);
                         $message = "Aset berhasil diperbarui";
                     }
@@ -108,7 +159,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-$assets = $conn->query("SELECT * FROM assets ORDER BY id_aset DESC")->fetchAll();
+$assets = $conn->query("SELECT * FROM assets WHERE deleted_at IS NULL ORDER BY id_aset DESC")->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -188,11 +239,7 @@ $assets = $conn->query("SELECT * FROM assets ORDER BY id_aset DESC")->fetchAll()
                 <tr>
                     <td><?= $index+1 ?></td>
                     <td>
-                        <?php if($asset['gambar']): ?>
-                            <img src="assets/img/<?= e($asset['gambar']) ?>" width="100" alt="<?= e($asset['nama_aset']) ?>">
-                        <?php else: ?>
-                            -
-                        <?php endif; ?>
+                        <img src="<?= e(asset_image_src($asset['gambar'])) ?>" width="100" alt="<?= e($asset['nama_aset']) ?>">
                     </td>
                     <td><?= e($asset['nama_aset']) ?></td>
                     <td><?= e($asset['kategori']) ?></td>

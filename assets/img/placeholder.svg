@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="420" viewBox="0 0 640 420" role="img" aria-labelledby="title desc">
+  <title id="title">No asset image</title>
+  <desc id="desc">A simple placeholder for assets without uploaded images.</desc>
+  <rect width="640" height="420" fill="#eef2f7"/>
+  <rect x="56" y="56" width="528" height="308" rx="18" fill="#ffffff" stroke="#cbd5e1" stroke-width="4"/>
+  <path d="M132 302l92-98 70 72 50-52 164 78H132z" fill="#dbeafe"/>
+  <circle cx="452" cy="138" r="44" fill="#bfdbfe"/>
+  <text x="320" y="374" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="#64748b">No Image</text>
+</svg>

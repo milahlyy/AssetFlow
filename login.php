@@ -16,6 +16,10 @@ if (isset($_SESSION['user_id'])) {
 
 $error = '';
 
+if (isset($_GET['error']) && $_GET['error'] === 'account_inactive') {
+    $error = "Akun tidak aktif. Silakan hubungi HRGA.";
+}
+
 // proses login jika user belum login dan menekan tombol login
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
@@ -29,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         // Mencari user di database berdasarkan email
         try {
-            $stmt = $conn->prepare("SELECT * FROM users WHERE email = :email");
+            $stmt = $conn->prepare("SELECT * FROM users WHERE email = :email AND deleted_at IS NULL");
             $stmt->bindParam(':email', $email);
             $stmt->execute();
             $user = $stmt->fetch();
@@ -89,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <p>Silahkan masuk terlebih dahulu</p>
 
         <?php if (!empty($error)): ?>
-            <div class="error"><?= htmlspecialchars($error) ?></div>
+            <div class="error"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></div>
         <?php endif; ?>
 
         <form method="POST">

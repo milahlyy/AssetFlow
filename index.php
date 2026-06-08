@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kembalikan'])) {
                 // Semua log sudah lengkap, update status menjadi returned
                 $update = $conn->prepare("
                     UPDATE loans
-                    SET status_loan = 'returned'
+                    SET status_loan = 'returned', returned_at = NOW()
                     WHERE id_loan = :id
                       AND id_user = :user_id
                       AND (status_loan = 'on_loan' OR (status_loan = 'approved' AND tgl_pinjam <= CURDATE()))
@@ -113,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kembalikan'])) {
             // Bukan mobil, langsung bisa dikembalikan tanpa perlu log
             $update = $conn->prepare("
                 UPDATE loans
-                SET status_loan = 'returned'
+                SET status_loan = 'returned', returned_at = NOW()
                 WHERE id_loan = :id
                   AND id_user = :user_id
                   AND (status_loan = 'on_loan' OR (status_loan = 'approved' AND tgl_pinjam <= CURDATE()))
@@ -150,14 +150,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kembalikan'])) {
 
     <div class="main-content">
         <h1>Dashboard Pegawai</h1>
-        <p class="welcome">Selamat datang, <strong><?= htmlspecialchars($nama) ?></strong></p>
+        <p class="welcome">Selamat datang, <strong><?= e($nama) ?></strong></p>
 
         <?php if (isset($_GET['success']) && $_GET['success'] == 'kembali'): ?>
             <div class="alert alert-success">Aset berhasil dikembalikan!</div>
         <?php endif; ?>
 
         <?php if (isset($error)): ?>
-            <div class="alert alert-error"><?= htmlspecialchars($error) ?></div>
+            <div class="alert alert-error"><?= e($error) ?></div>
         <?php endif; ?>
 
         <!-- Tabel: Sedang Saya Pinjam -->
@@ -181,19 +181,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kembalikan'])) {
                         <td><?= $no++ ?></td>
                             <td>
                                 <div class="asset-info-table">
-                                    <?php if ($item['gambar']): ?>
-                                        <img src="assets/img/<?= htmlspecialchars($item['gambar']) ?>" alt="<?= htmlspecialchars($item['nama_aset']) ?>" class="asset-thumb">
-                                    <?php endif; ?>
-                                    <span><?= htmlspecialchars($item['nama_aset']) ?></span>
+                                    <img src="<?= e(asset_image_src($item['gambar'])) ?>" alt="<?= e($item['nama_aset']) ?>" class="asset-thumb">
+                                    <span><?= e($item['nama_aset']) ?></span>
                                     <?php if ($item['plat_nomor']): ?>
-                                        <small>(<?= htmlspecialchars($item['plat_nomor']) ?>)</small>
+                                        <small>(<?= e($item['plat_nomor']) ?>)</small>
                                     <?php endif; ?>
                                 </div>
                             </td>
                         <td><span class="badge badge-<?= e($item['kategori']) ?>"><?= e(ucfirst($item['kategori'])) ?></span></td>
                         <td><?= date('d/m/Y', strtotime($item['tgl_pinjam'])) ?></td>
                         <td><?= date('d/m/Y', strtotime($item['tgl_kembali'])) ?></td>
-                        <td><?= htmlspecialchars($item['keterangan']) ?></td>
+                        <td><?= e($item['keterangan']) ?></td>
                         <td>
                             <?php 
                             // Cek jika mobil dan log belum lengkap
@@ -262,19 +260,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kembalikan'])) {
                         <td><?= $no++ ?></td>
                             <td>
                                 <div class="asset-info-table">
-                                    <?php if ($item['gambar']): ?>
-                                        <img src="assets/img/<?= htmlspecialchars($item['gambar']) ?>" alt="<?= htmlspecialchars($item['nama_aset']) ?>" class="asset-thumb">
-                                    <?php endif; ?>
-                                    <span><?= htmlspecialchars($item['nama_aset']) ?></span>
+                                    <img src="<?= e(asset_image_src($item['gambar'])) ?>" alt="<?= e($item['nama_aset']) ?>" class="asset-thumb">
+                                    <span><?= e($item['nama_aset']) ?></span>
                                     <?php if ($item['plat_nomor']): ?>
-                                        <small>(<?= htmlspecialchars($item['plat_nomor']) ?>)</small>
+                                        <small>(<?= e($item['plat_nomor']) ?>)</small>
                                     <?php endif; ?>
                                 </div>
                             </td>
                         <td><span class="badge badge-<?= e($item['kategori']) ?>"><?= e(ucfirst($item['kategori'])) ?></span></td>
                         <td><?= date('d/m/Y', strtotime($item['tgl_pinjam'])) ?></td>
                         <td><?= date('d/m/Y', strtotime($item['tgl_kembali'])) ?></td>
-                        <td><?= htmlspecialchars($item['keterangan']) ?></td>
+                        <td><?= e($item['keterangan']) ?></td>
                         <td>
                             <?php if ($item['status_loan'] == 'pending'): ?>
                                 <span class="badge badge-pending">Menunggu</span>
@@ -282,7 +278,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kembalikan'])) {
                                 <span class="badge badge-approved">Disetujui</span>
                             <?php endif; ?>
                             <?php if ($item['alasan_penolakan']): ?>
-                                <br><small style="color: #dc3545; display: block; margin-top: 5px;">Ditolak: <?= htmlspecialchars($item['alasan_penolakan']) ?></small>
+                                <br><small style="color: #dc3545; display: block; margin-top: 5px;">Ditolak: <?= e($item['alasan_penolakan']) ?></small>
                             <?php endif; ?>
                         </td>
                     </tr>

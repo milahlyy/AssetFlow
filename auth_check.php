@@ -56,3 +56,23 @@ function verify_csrf() {
         exit('Invalid CSRF token.');
     }
 }
+
+function asset_image_src($filename) {
+    $fallback = 'assets/img/placeholder.svg';
+
+    if (!is_string($filename) || trim($filename) === '') {
+        return $fallback;
+    }
+
+    $basename = basename($filename);
+    if ($basename !== $filename || $basename === '') {
+        return $fallback;
+    }
+
+    $path = __DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'img' . DIRECTORY_SEPARATOR . $basename;
+    if (!is_file($path)) {
+        return $fallback;
+    }
+
+    return 'assets/img/' . rawurlencode($basename);
+}

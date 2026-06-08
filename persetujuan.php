@@ -18,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         FROM loans l
         JOIN assets a ON l.id_aset = a.id_aset
         WHERE l.id_loan = ? AND l.status_loan = 'pending'
+          AND a.deleted_at IS NULL
     ");
     $loan_stmt->execute([$id_loan]);
     $loan = $loan_stmt->fetch();
@@ -29,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($loan['kategori'] === 'mobil' && !empty($_POST['driver_id'])) {
             $driver_id = filter_var($_POST['driver_id'], FILTER_VALIDATE_INT);
-            $driver_check = $conn->prepare("SELECT COUNT(*) FROM users WHERE id_user = ? AND role = 'supir'");
+            $driver_check = $conn->prepare("SELECT COUNT(*) FROM users WHERE id_user = ? AND role = 'supir' AND deleted_at IS NULL");
             $driver_check->execute([$driver_id]);
 
             if (!$driver_id || $driver_check->fetchColumn() == 0) {
@@ -62,11 +63,12 @@ $loans = $conn->query("
     JOIN users u ON l.id_user = u.id_user 
     JOIN assets a ON l.id_aset = a.id_aset 
     WHERE l.status_loan = 'pending' 
+      AND a.deleted_at IS NULL
     ORDER BY l.tgl_pinjam ASC
 ")->fetchAll();
 
 // Get drivers 
-$drivers = $conn->query("SELECT * FROM users WHERE role='supir'")->fetchAll();
+$drivers = $conn->query("SELECT * FROM users WHERE role='supir' AND deleted_at IS NULL")->fetchAll();
 ?>
 
 <!DOCTYPE html>

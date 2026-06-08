@@ -16,7 +16,10 @@ CREATE TABLE `users` (
   `email` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
   `role` enum('pegawai','hrga','satpam','supir') NOT NULL,
-  `divisi` varchar(50) DEFAULT NULL
+  `divisi` varchar(50) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -42,7 +45,10 @@ CREATE TABLE `assets` (
   `kategori` enum('mobil','elektronik') NOT NULL,
   `plat_nomor` varchar(20) DEFAULT NULL,
   `status_aset` enum('tersedia','maintenance','rusak') NOT NULL DEFAULT 'tersedia',
-  `gambar` varchar(255) DEFAULT NULL
+  `gambar` varchar(255) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -50,8 +56,8 @@ CREATE TABLE `assets` (
 --
 
 INSERT INTO `assets` (`id_aset`, `nama_aset`, `kategori`, `plat_nomor`, `status_aset`, `gambar`) VALUES
-(1, 'Toyota Avanza', 'mobil', 'B 1234 CD', 'tersedia', 'avanza.jpg'),
-(2, 'Innova Reborn', 'mobil', 'B 5678 EF', 'tersedia', 'innova.jpg'),
+(1, 'Toyota Avanza', 'mobil', 'B 1234 CD', 'tersedia', 'Avanza.jpg'),
+(2, 'Innova Reborn', 'mobil', 'B 5678 EF', 'tersedia', 'Innova.jpg'),
 (3, 'Laptop Dell Latitude', 'elektronik', NULL, 'tersedia', 'laptop_dell.jpg'),
 (4, 'Projector Epson', 'elektronik', NULL, 'tersedia', 'projector.jpg');
 
@@ -75,7 +81,10 @@ CREATE TABLE `loans` (
   `kondisi_mobil` text DEFAULT NULL,
   `keterangan` text NOT NULL,
   `alasan_penolakan` text DEFAULT NULL,
-  `status_loan` enum('pending','approved','rejected','on_loan','returned') NOT NULL DEFAULT 'pending'
+  `status_loan` enum('pending','approved','rejected','on_loan','returned') NOT NULL DEFAULT 'pending',
+  `returned_at` datetime DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -83,13 +92,15 @@ CREATE TABLE `loans` (
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id_user`),
-  ADD UNIQUE KEY `email` (`email`);
+  ADD UNIQUE KEY `email` (`email`),
+  ADD KEY `idx_users_active_role` (`deleted_at`, `role`);
 
 --
 -- Indexes for table `assets`
 --
 ALTER TABLE `assets`
-  ADD PRIMARY KEY (`id_aset`);
+  ADD PRIMARY KEY (`id_aset`),
+  ADD KEY `idx_assets_visible` (`deleted_at`, `status_aset`, `kategori`);
 
 --
 -- Indexes for table `loans`
@@ -98,7 +109,11 @@ ALTER TABLE `loans`
   ADD PRIMARY KEY (`id_loan`),
   ADD KEY `id_user` (`id_user`),
   ADD KEY `id_aset` (`id_aset`),
-  ADD KEY `driver_id` (`driver_id`);
+  ADD KEY `driver_id` (`driver_id`),
+  ADD KEY `idx_loans_asset_schedule` (`id_aset`, `status_loan`, `tgl_pinjam`, `tgl_kembali`),
+  ADD KEY `idx_loans_user_status` (`id_user`, `status_loan`),
+  ADD KEY `idx_loans_driver_status` (`driver_id`, `status_loan`),
+  ADD KEY `idx_loans_report_date` (`tgl_pinjam`, `status_loan`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -117,9 +132,13 @@ ALTER TABLE `loans`
 -- Constraints for table `loans`
 --
 ALTER TABLE `loans`
-  ADD CONSTRAINT `loans_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`) ON DELETE CASCADE,
-  ADD CONSTRAINT `loans_ibfk_2` FOREIGN KEY (`id_aset`) REFERENCES `assets` (`id_aset`) ON DELETE CASCADE,
+  ADD CONSTRAINT `loans_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`) ON DELETE RESTRICT,
+  ADD CONSTRAINT `loans_ibfk_2` FOREIGN KEY (`id_aset`) REFERENCES `assets` (`id_aset`) ON DELETE RESTRICT,
   ADD CONSTRAINT `loans_ibfk_3` FOREIGN KEY (`driver_id`) REFERENCES `users` (`id_user`) ON DELETE SET NULL;
+
+ALTER TABLE `loans`
+  ADD CONSTRAINT `chk_loans_dates` CHECK (`tgl_kembali` >= `tgl_pinjam`),
+  ADD CONSTRAINT `chk_loans_km_order` CHECK (`km_awal` IS NULL OR `km_akhir` IS NULL OR `km_akhir` >= `km_awal`);
 
 -- SKENARIO 1: BARU DISETUJUI (Siap Berangkat)
 -- Satpam: Perlu isi Jam Keluar.
@@ -135,7 +154,7 @@ INSERT INTO loans (id_loan, id_user, id_aset, driver_id, tgl_pinjam, tgl_kembali
 (2, 2, 2, 4, CURDATE(), CURDATE(), CONCAT(CURDATE(), ' 08:00:00'), NULL, 50000, NULL, 'Bodi mulus, bensin full', 'Meeting di Jakarta (Sedang Jalan)', 'on_loan');
 
 INSERT INTO assets (id_aset, nama_aset, kategori, plat_nomor, status_aset, gambar) VALUES
-(5, 'Iphone 17', 'elektronik', NULL, 'tersedia', 'Iphone.jpg'),
+(5, 'Iphone 17', 'elektronik', NULL, 'tersedia', 'iphone.jpg'),
 (6, 'Kamera Canon', 'elektronik', NULL, 'maintenance', 'canon.jpg'),
 (7, 'Kamera Olympus', 'elektronik', NULL, 'tersedia', 'olympus.jpg');
 

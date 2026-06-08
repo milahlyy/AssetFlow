@@ -60,7 +60,7 @@ if ($aksi === 'edit') {
         $stmt = $conn->prepare("
             UPDATE users
             SET nama=?, email=?, password=?, role=?, divisi=?
-            WHERE id_user=?
+            WHERE id_user=? AND deleted_at IS NULL
         ");
         $stmt->execute([$nama, $email, $password, $role, $divisi, $id_user]);
     } 
@@ -69,7 +69,7 @@ if ($aksi === 'edit') {
         $stmt = $conn->prepare("
             UPDATE users
             SET nama=?, email=?, role=?, divisi=?
-            WHERE id_user=?
+            WHERE id_user=? AND deleted_at IS NULL
         ");
         $stmt->execute([$nama, $email, $role, $divisi, $id_user]);
     }

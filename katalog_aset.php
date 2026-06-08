@@ -9,6 +9,11 @@ $nama = $_SESSION['nama'];
 
 // Filter kategori
 $filter_kategori = $_GET['kategori'] ?? 'all';
+$allowed_categories = ['all', 'mobil', 'elektronik'];
+
+if (!in_array($filter_kategori, $allowed_categories, true)) {
+    $filter_kategori = 'all';
+}
 
 // Query aset dengan status ketersediaan
 $query = "SELECT a.*, 
@@ -17,7 +22,8 @@ $query = "SELECT a.*,
            AND l.status_loan IN ('pending', 'approved', 'on_loan')
            AND CURDATE() BETWEEN l.tgl_pinjam AND l.tgl_kembali) as sedang_dipinjam
           FROM assets a
-          WHERE a.status_aset = 'tersedia'";
+          WHERE a.status_aset = 'tersedia'
+          AND a.deleted_at IS NULL";
 
 if ($filter_kategori != 'all') {
     $query .= " AND a.kategori = :kategori";
@@ -72,13 +78,7 @@ $assets = $stmt->fetchAll();
                 <?php foreach ($assets as $asset): ?>
                     <div class="asset-card">
                         <div class="asset-image">
-                            <?php if ($asset['gambar']): ?>
-                                <img src="assets/img/<?= htmlspecialchars($asset['gambar']) ?>" alt="<?= htmlspecialchars($asset['nama_aset']) ?>">
-                            <?php else: ?>
-                                <div class="no-image">
-                                    <span>No Image</span>
-                                </div>
-                            <?php endif; ?>
+                            <img src="<?= e(asset_image_src($asset['gambar'])) ?>" alt="<?= e($asset['nama_aset']) ?>">
                             <div class="asset-status-badge">
                                 <?php if ($asset['sedang_dipinjam'] > 0): ?>
                                     <span class="badge badge-dipinjam">Sedang Dipinjam</span>
@@ -88,12 +88,12 @@ $assets = $stmt->fetchAll();
                             </div>
                         </div>
                         <div class="asset-info">
-                            <h3><?= htmlspecialchars($asset['nama_aset']) ?></h3>
+                            <h3><?= e($asset['nama_aset']) ?></h3>
                             <p class="asset-category">
                                 <span class="badge badge-<?= e($asset['kategori']) ?>"><?= e(ucfirst($asset['kategori'])) ?></span>
                             </p>
                             <?php if ($asset['plat_nomor']): ?>
-                                <p class="asset-detail">Plat: <strong><?= htmlspecialchars($asset['plat_nomor']) ?></strong></p>
+                                <p class="asset-detail">Plat: <strong><?= e($asset['plat_nomor']) ?></strong></p>
                             <?php endif; ?>
                             <a href="form_peminjaman.php?id=<?= e($asset['id_aset']) ?>" class="btn btn-primary btn-block">
                                 Pinjam Sekarang

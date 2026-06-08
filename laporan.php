@@ -53,12 +53,14 @@ $total = count($reports);
 $approved = 0;
 $rejected = 0;
 $pending = 0;
+$returned = 0;
 
 foreach($reports as $r) {
     switch($r['status_loan']) {
         case 'approved': $approved++; break;
         case 'rejected': $rejected++; break;
         case 'pending': $pending++; break;
+        case 'returned': $returned++; break;
     }
 }
 ?>
@@ -102,6 +104,8 @@ foreach($reports as $r) {
                     <option value="pending" <?= $status=='pending'?'selected':'' ?>>Pending</option>
                     <option value="approved" <?= $status=='approved'?'selected':'' ?>>Approved</option>
                     <option value="rejected" <?= $status=='rejected'?'selected':'' ?>>Rejected</option>
+                    <option value="on_loan" <?= $status=='on_loan'?'selected':'' ?>>On Loan</option>
+                    <option value="returned" <?= $status=='returned'?'selected':'' ?>>Returned</option>
                 </select>
             </div>
             
@@ -134,6 +138,10 @@ foreach($reports as $r) {
                 <h4>PENDING</h4>
                 <div class="number"><?= $pending ?></div>
             </div>
+            <div class="stat-box stat-total">
+                <h4>RETURNED</h4>
+                <div class="number"><?= $returned ?></div>
+            </div>
         </div>
         
         <h3>Detail Laporan</h3>
@@ -152,6 +160,7 @@ foreach($reports as $r) {
                             <th>Kategori</th>
                             <th>Status</th>
                             <th>Driver</th>
+                            <th>Dikembalikan</th>
                             <th>Ket/Alasan</th>
                         </tr>
                     </thead>
@@ -170,7 +179,8 @@ foreach($reports as $r) {
                                 </span>
                             </td>
                             <td><?= e($r['driver'] ?: '-') ?></td>
-                            <td><?= e($r['alasan_penolakan'] ?: '-') ?></td>
+                            <td><?= $r['returned_at'] ? e(date('d/m/Y H:i', strtotime($r['returned_at']))) : '-' ?></td>
+                            <td><?= e($r['alasan_penolakan'] ?: $r['keterangan']) ?></td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>
