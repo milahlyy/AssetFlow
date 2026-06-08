@@ -8,6 +8,16 @@ $start_date = $_GET['start_date'] ?? date('Y-m-01');
 $end_date = $_GET['end_date'] ?? date('Y-m-t');
 $status = $_GET['status'] ?? '';
 $kategori = $_GET['kategori'] ?? '';
+$allowed_statuses = ['pending', 'approved', 'rejected', 'on_loan', 'returned'];
+$allowed_categories = ['mobil', 'elektronik'];
+
+if ($status !== '' && !in_array($status, $allowed_statuses, true)) {
+    $status = '';
+}
+
+if ($kategori !== '' && !in_array($kategori, $allowed_categories, true)) {
+    $kategori = '';
+}
 
 // Build query
 $query = "
@@ -77,12 +87,12 @@ foreach($reports as $r) {
         <form method="GET" class="filter-card">
             <div class="filter-group">
                 <label>Tanggal Mulai</label>
-                <input type="date" name="start_date" value="<?= $start_date ?>">
+                <input type="date" name="start_date" value="<?= e($start_date) ?>">
             </div>
             
             <div class="filter-group">
                 <label>Tanggal Akhir</label>
-                <input type="date" name="end_date" value="<?= $end_date ?>">
+                <input type="date" name="end_date" value="<?= e($end_date) ?>">
             </div>
             
             <div class="filter-group">
@@ -150,17 +160,17 @@ foreach($reports as $r) {
                         <tr>
                             <td><?= $index+1 ?></td>
                             <td><?= date('d/m/Y', strtotime($r['tgl_pinjam'])) ?></td>
-                            <td><?= htmlspecialchars($r['pemohon']) ?></td>
-                            <td><?= $r['divisi'] ?></td>
-                            <td><?= htmlspecialchars($r['nama_aset']) ?></td>
-                            <td><?= ucfirst($r['kategori']) ?></td>
+                            <td><?= e($r['pemohon']) ?></td>
+                            <td><?= e($r['divisi']) ?></td>
+                            <td><?= e($r['nama_aset']) ?></td>
+                            <td><?= e(ucfirst($r['kategori'])) ?></td>
                             <td>
-                                <span class="status-badge status-<?= $r['status_loan'] ?>">
-                                    <?= ucfirst($r['status_loan']) ?>
+                                <span class="status-badge status-<?= e($r['status_loan']) ?>">
+                                    <?= e(ucfirst($r['status_loan'])) ?>
                                 </span>
                             </td>
-                            <td><?= $r['driver'] ?: '-' ?></td>
-                            <td><?= $r['alasan_penolakan'] ?: '-' ?></td>
+                            <td><?= e($r['driver'] ?: '-') ?></td>
+                            <td><?= e($r['alasan_penolakan'] ?: '-') ?></td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>

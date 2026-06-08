@@ -31,6 +31,8 @@ $success = '';
 
 // Proses submit form
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    verify_csrf();
+
     $tgl_pinjam = $_POST['tgl_pinjam'] ?? '';
     $tgl_kembali = $_POST['tgl_kembali'] ?? '';
     $keterangan = trim($_POST['keterangan'] ?? '');
@@ -48,31 +50,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } elseif ($tgl_pinjam < date('Y-m-d')) {
         $error = "Tanggal pinjam tidak boleh di masa lalu!";
     } else {
-        // Validasi bentrok jadwal
-        $check_conflict = $conn->prepare("
-            SELECT COUNT(*) as jumlah 
-            FROM loans 
-            WHERE id_aset = :id_aset 
-            AND status_loan IN ('pending', 'approved', 'on_loan')
-            AND (
-                (tgl_pinjam <= :tgl_kembali AND tgl_kembali >= :tgl_pinjam)
-            )
-        ");
-        $check_conflict->bindParam(':id_aset', $id_aset);
-        $check_conflict->bindParam(':tgl_pinjam', $tgl_pinjam);
-        $check_conflict->bindParam(':tgl_kembali', $tgl_kembali);
-        $check_conflict->execute();
-        $conflict = $check_conflict->fetch();
+        try {
+            $conn->beginTransaction();
 
-        if ($conflict['jumlah'] > 0) {
-            $error = "Aset ini sudah dipinjam pada tanggal yang diminta. Silakan pilih tanggal lain.";
-        } else {
-            // Cek status aset fisik
-            if ($aset['status_aset'] != 'tersedia') {
-                $error = "Aset sedang tidak tersedia (Status: " . ucfirst($aset['status_aset']) . ")";
+            // Lock aset supaya dua request paralel untuk aset yang sama tidak sama-sama lolos.
+            $lock_aset = $conn->prepare("SELECT * FROM assets WHERE id_aset = :id FOR UPDATE");
+            $lock_aset->bindParam(':id', $id_aset);
+            $lock_aset->execute();
+            $locked_aset = $lock_aset->fetch();
+
+            if (!$locked_aset) {
+                $error = "Aset tidak ditemukan.";
+            } elseif ($locked_aset['status_aset'] != 'tersedia') {
+                $error = "Aset sedang tidak tersedia (Status: " . ucfirst($locked_aset['status_aset']) . ")";
             } else {
-                // Simpan peminjaman
-                try {
+                // Validasi bentrok jadwal setelah row aset dikunci.
+                $check_conflict = $conn->prepare("
+                    SELECT id_loan
+                    FROM loans
+                    WHERE id_aset = :id_aset
+                    AND status_loan IN ('pending', 'approved', 'on_loan')
+                    AND (tgl_pinjam <= :tgl_kembali AND tgl_kembali >= :tgl_pinjam)
+                    LIMIT 1
+                ");
+                $check_conflict->bindParam(':id_aset', $id_aset);
+                $check_conflict->bindParam(':tgl_pinjam', $tgl_pinjam);
+                $check_conflict->bindParam(':tgl_kembali', $tgl_kembali);
+                $check_conflict->execute();
+                $conflict = $check_conflict->fetch();
+
+                if ($conflict) {
+                    $error = "Aset ini sudah dipinjam pada tanggal yang diminta. Silakan pilih tanggal lain.";
+                } else {
                     $insert = $conn->prepare("
                         INSERT INTO loans (id_user, id_aset, tgl_pinjam, tgl_kembali, keterangan, status_loan) 
                         VALUES (:id_user, :id_aset, :tgl_pinjam, :tgl_kembali, :keterangan, 'pending')
@@ -83,14 +92,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $insert->bindParam(':tgl_kembali', $tgl_kembali);
                     $insert->bindParam(':keterangan', $keterangan);
                     $insert->execute();
-
-                    header("Location: index.php?success=booking");
-                    exit();
-                } catch (PDOException $e) {
-                    error_log("Booking error: " . $e->getMessage());
-                    $error = "Terjadi kesalahan saat menyimpan data. Silakan coba lagi.";
                 }
             }
+
+            if ($error) {
+                $conn->rollBack();
+            } else {
+                $conn->commit();
+                header("Location: index.php?success=booking");
+                exit();
+            }
+        } catch (PDOException $e) {
+            if ($conn->inTransaction()) {
+                $conn->rollBack();
+            }
+
+            error_log("Booking error: " . $e->getMessage());
+            $error = "Terjadi kesalahan saat menyimpan data. Silakan coba lagi.";
         }
     }
 }
@@ -144,7 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <?php endif; ?>
                         <p><strong>Status:</strong> 
                             <span class="badge badge-<?= $aset['status_aset'] == 'tersedia' ? 'tersedia' : 'maintenance' ?>">
-                                <?= ucfirst($aset['status_aset']) ?>
+                                <?= e(ucfirst($aset['status_aset'])) ?>
                             </span>
                         </p>
                     </div>
@@ -153,6 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             <!-- Form Peminjaman -->
             <form method="POST" class="booking-form">
+                <?= csrf_field() ?>
                 <h3>Formulir Peminjaman</h3>
                 
                 <div class="form-group">

@@ -100,7 +100,7 @@ $riwayat = $stmt->fetchAll();
                                     <?php endif; ?>
                                 </div>
                             </td>
-                            <td><span class="badge badge-<?= $item['kategori'] ?>"><?= ucfirst($item['kategori']) ?></span></td>
+                            <td><span class="badge badge-<?= e($item['kategori']) ?>"><?= e(ucfirst($item['kategori'])) ?></span></td>
                             <td><?= date('d/m/Y', strtotime($item['tgl_pinjam'])) ?></td>
                             <td><?= date('d/m/Y', strtotime($item['tgl_kembali'])) ?></td>
                             <td><?= htmlspecialchars($item['keterangan']) ?></td>
@@ -131,7 +131,7 @@ $riwayat = $stmt->fetchAll();
                                         break;
                                 }
                                 ?>
-                                <span class="badge badge-<?= $status_class ?>"><?= $status_text ?></span>
+                                <span class="badge badge-<?= e($status_class) ?>"><?= e($status_text) ?></span>
                                 <?php if ($item['alasan_penolakan']): ?>
                                     <br><small style="color: #dc3545; display: block; margin-top: 5px;">
                                         <strong>Alasan:</strong> <?= htmlspecialchars($item['alasan_penolakan']) ?>

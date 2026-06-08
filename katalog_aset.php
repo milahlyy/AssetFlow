@@ -90,12 +90,12 @@ $assets = $stmt->fetchAll();
                         <div class="asset-info">
                             <h3><?= htmlspecialchars($asset['nama_aset']) ?></h3>
                             <p class="asset-category">
-                                <span class="badge badge-<?= $asset['kategori'] ?>"><?= ucfirst($asset['kategori']) ?></span>
+                                <span class="badge badge-<?= e($asset['kategori']) ?>"><?= e(ucfirst($asset['kategori'])) ?></span>
                             </p>
                             <?php if ($asset['plat_nomor']): ?>
                                 <p class="asset-detail">Plat: <strong><?= htmlspecialchars($asset['plat_nomor']) ?></strong></p>
                             <?php endif; ?>
-                            <a href="form_peminjaman.php?id=<?= $asset['id_aset'] ?>" class="btn btn-primary btn-block">
+                            <a href="form_peminjaman.php?id=<?= e($asset['id_aset']) ?>" class="btn btn-primary btn-block">
                                 Pinjam Sekarang
                             </a>
                         </div>

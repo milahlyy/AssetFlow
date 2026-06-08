@@ -50,7 +50,7 @@ $active_loan = $stmtLoan->fetch();
 
     <div class="mobil-card">
         <?php if ($mobil['gambar']): ?>
-            <img src="assets/img/<?php echo $mobil['gambar']; ?>">
+            <img src="assets/img/<?php echo e($mobil['gambar']); ?>" alt="<?php echo e($mobil['nama_aset']); ?>">
         <?php else: ?>
             <div class="no-image">Tidak ada gambar</div>
         <?php endif; ?>
@@ -59,8 +59,8 @@ $active_loan = $stmtLoan->fetch();
 
         <p>
             <strong>Plat Nomor:</strong> <?php echo htmlspecialchars($mobil['plat_nomor']); ?><br>
-            <strong>Kategori:</strong> <?php echo strtoupper($mobil['kategori']); ?><br>
-            <strong>Status Aset:</strong> <?php echo strtoupper($mobil['status_aset']); ?>
+            <strong>Kategori:</strong> <?php echo e(strtoupper($mobil['kategori'])); ?><br>
+            <strong>Status Aset:</strong> <?php echo e(strtoupper($mobil['status_aset'])); ?>
         </p>
     </div>
 
@@ -92,16 +92,16 @@ $active_loan = $stmtLoan->fetch();
                 </tr>
                 <tr>
                     <td>Jadwal</td>
-                    <td><?php echo $active_loan['tgl_pinjam']; ?> s/d <?php echo $active_loan['tgl_kembali']; ?></td>
+                    <td><?php echo e($active_loan['tgl_pinjam']); ?> s/d <?php echo e($active_loan['tgl_kembali']); ?></td>
                 </tr>
             </table>
 
             <?php if ($role == 'satpam'): ?>
-                <a href="form_satpam.php?id_loan=<?php echo $active_loan['id_loan']; ?>">
+                <a href="form_satpam.php?id_loan=<?php echo e($active_loan['id_loan']); ?>">
                     <button>UPDATE JAM KELUAR / MASUK</button>
                 </a>
             <?php elseif ($role == 'supir' && $active_loan['driver_id'] == $my_id): ?>
-                <a href="form_supir.php?id_loan=<?php echo $active_loan['id_loan']; ?>">
+                <a href="form_supir.php?id_loan=<?php echo e($active_loan['id_loan']); ?>">
                     <button>UPDATE KM & KONDISI</button>
                 </a>
             <?php endif; ?>

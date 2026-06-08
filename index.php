@@ -40,7 +40,9 @@ $menunggu = $stmt_menunggu->fetchAll();
 
 // Handle pengembalian aset
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kembalikan'])) {
-    $id_loan = $_POST['id_loan'];
+    verify_csrf();
+
+    $id_loan = filter_input(INPUT_POST, 'id_loan', FILTER_VALIDATE_INT);
     
     // Ambil data loan beserta kategori asset
     $check = $conn->prepare("
@@ -93,8 +95,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kembalikan'])) {
                 $error = "Tidak dapat mengembalikan aset. Log belum lengkap. Data yang masih kurang: " . implode(", ", $log_kurang);
             } else {
                 // Semua log sudah lengkap, update status menjadi returned
-                $update = $conn->prepare("UPDATE loans SET status_loan = 'returned' WHERE id_loan = :id");
+                $update = $conn->prepare("
+                    UPDATE loans
+                    SET status_loan = 'returned'
+                    WHERE id_loan = :id
+                      AND id_user = :user_id
+                      AND (status_loan = 'on_loan' OR (status_loan = 'approved' AND tgl_pinjam <= CURDATE()))
+                ");
                 $update->bindParam(':id', $id_loan);
+                $update->bindParam(':user_id', $user_id);
                 $update->execute();
                 
                 header("Location: index.php?success=kembali");
@@ -102,8 +111,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kembalikan'])) {
             }
         } else {
             // Bukan mobil, langsung bisa dikembalikan tanpa perlu log
-            $update = $conn->prepare("UPDATE loans SET status_loan = 'returned' WHERE id_loan = :id");
+            $update = $conn->prepare("
+                UPDATE loans
+                SET status_loan = 'returned'
+                WHERE id_loan = :id
+                  AND id_user = :user_id
+                  AND (status_loan = 'on_loan' OR (status_loan = 'approved' AND tgl_pinjam <= CURDATE()))
+            ");
             $update->bindParam(':id', $id_loan);
+            $update->bindParam(':user_id', $user_id);
             $update->execute();
             
             header("Location: index.php?success=kembali");
@@ -174,7 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kembalikan'])) {
                                     <?php endif; ?>
                                 </div>
                             </td>
-                        <td><span class="badge badge-<?= $item['kategori'] ?>"><?= ucfirst($item['kategori']) ?></span></td>
+                        <td><span class="badge badge-<?= e($item['kategori']) ?>"><?= e(ucfirst($item['kategori'])) ?></span></td>
                         <td><?= date('d/m/Y', strtotime($item['tgl_pinjam'])) ?></td>
                         <td><?= date('d/m/Y', strtotime($item['tgl_kembali'])) ?></td>
                         <td><?= htmlspecialchars($item['keterangan']) ?></td>
@@ -214,7 +230,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kembalikan'])) {
                                 </small>
                             <?php endif; ?>
                             <form method="POST" style="display: inline;" onsubmit="return confirm('Yakin ingin mengembalikan aset ini?');">
-                                <input type="hidden" name="id_loan" value="<?= $item['id_loan'] ?>">
+                                <?= csrf_field() ?>
+                                <input type="hidden" name="id_loan" value="<?= e($item['id_loan']) ?>">
                                 <button type="submit" name="kembalikan" class="btn btn-return" <?= $log_belum_lengkap ? 'title="Log belum lengkap, pengembalian mungkin gagal"' : '' ?>>Kembalikan</button>
                             </form>
                         </td>
@@ -254,7 +271,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kembalikan'])) {
                                     <?php endif; ?>
                                 </div>
                             </td>
-                        <td><span class="badge badge-<?= $item['kategori'] ?>"><?= ucfirst($item['kategori']) ?></span></td>
+                        <td><span class="badge badge-<?= e($item['kategori']) ?>"><?= e(ucfirst($item['kategori'])) ?></span></td>
                         <td><?= date('d/m/Y', strtotime($item['tgl_pinjam'])) ?></td>
                         <td><?= date('d/m/Y', strtotime($item['tgl_kembali'])) ?></td>
                         <td><?= htmlspecialchars($item['keterangan']) ?></td>

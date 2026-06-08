@@ -42,7 +42,7 @@ $list = $conn->query("SELECT * FROM assets WHERE kategori='mobil'")->fetchAll();
 <div class="main-content">
 
     <div class="page-header">
-        <h1>Dashboard <?php echo ucfirst($role); ?></h1>
+        <h1>Dashboard <?php echo e(ucfirst($role)); ?></h1>
         <h2>Galeri Mobil Kantor</h2>
     </div>
 
@@ -61,19 +61,19 @@ $list = $conn->query("SELECT * FROM assets WHERE kategori='mobil'")->fetchAll();
                 <td><?php echo $no++; ?></td>
                 <td align="center">
                     <?php if($m['gambar']): ?>
-                        <img src="assets/img/<?php echo $m['gambar']; ?>" width="100" style="border:1px solid #ddd; padding:3px;">
+                        <img src="assets/img/<?php echo e($m['gambar']); ?>" width="100" style="border:1px solid #ddd; padding:3px;" alt="<?php echo e($m['nama_aset']); ?>">
                     <?php else: ?>
                         <span style="color:gray; font-size:12px;">(Tidak ada foto)</span>
                     <?php endif; ?>
                 </td>
                 <td>
                     <b>
-                        <a href="detail_mobil.php?id=<?php echo $m['id_aset']; ?>" class="nama-mobil" title="Klik untuk lihat detail">
-                            <?php echo $m['nama_aset']; ?>
+                        <a href="detail_mobil.php?id=<?php echo e($m['id_aset']); ?>" class="nama-mobil" title="Klik untuk lihat detail">
+                            <?php echo e($m['nama_aset']); ?>
                         </a>
                     </b>
                     <br>
-                    <small><?php echo $m['plat_nomor']; ?></small>
+                    <small><?php echo e($m['plat_nomor']); ?></small>
                 </td>
                 <td>
                     <?php 
@@ -84,7 +84,7 @@ $list = $conn->query("SELECT * FROM assets WHERE kategori='mobil'")->fetchAll();
                     if($m['status_aset'] == 'maintenance') $warna = 'orange';
                     ?>
                     <strong style="color: <?php echo $warna; ?>">
-                        <?php echo strtoupper($m['status_aset']); ?>
+                        <?php echo e(strtoupper($m['status_aset'])); ?>
                     </strong>
                 </td>
             </tr>

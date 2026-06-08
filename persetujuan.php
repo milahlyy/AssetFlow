@@ -3,21 +3,55 @@ require_once 'database/db.php';
 require_once 'auth_check.php';
 checkrole(['hrga']);
 
+$message = '';
+$error = '';
+
 // Handle approve/reject 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $id_loan = $_POST['id_loan'];
-    $action = $_POST['action'];
-    
-    if ($action == 'approve') {
-        $driver_id = $_POST['driver_id'] ?: null;
-        $stmt = $conn->prepare("UPDATE loans SET status_loan='approved', driver_id=? WHERE id_loan=?");
-        $stmt->execute([$driver_id, $id_loan]);
-        $message = "Peminjaman disetujui";
+    verify_csrf();
+
+    $id_loan = filter_input(INPUT_POST, 'id_loan', FILTER_VALIDATE_INT);
+    $action = $_POST['action'] ?? '';
+
+    $loan_stmt = $conn->prepare("
+        SELECT l.id_loan, a.kategori
+        FROM loans l
+        JOIN assets a ON l.id_aset = a.id_aset
+        WHERE l.id_loan = ? AND l.status_loan = 'pending'
+    ");
+    $loan_stmt->execute([$id_loan]);
+    $loan = $loan_stmt->fetch();
+
+    if (!$id_loan || !$loan || !in_array($action, ['approve', 'reject'], true)) {
+        $error = "Data peminjaman tidak valid atau sudah diproses.";
+    } elseif ($action == 'approve') {
+        $driver_id = null;
+
+        if ($loan['kategori'] === 'mobil' && !empty($_POST['driver_id'])) {
+            $driver_id = filter_var($_POST['driver_id'], FILTER_VALIDATE_INT);
+            $driver_check = $conn->prepare("SELECT COUNT(*) FROM users WHERE id_user = ? AND role = 'supir'");
+            $driver_check->execute([$driver_id]);
+
+            if (!$driver_id || $driver_check->fetchColumn() == 0) {
+                $error = "Driver tidak valid.";
+            }
+        }
+
+        if (!$error) {
+            $stmt = $conn->prepare("UPDATE loans SET status_loan='approved', driver_id=? WHERE id_loan=? AND status_loan='pending'");
+            $stmt->execute([$driver_id, $id_loan]);
+            $message = $stmt->rowCount() > 0 ? "Peminjaman disetujui" : "Peminjaman sudah diproses sebelumnya.";
+        }
     } else {
-        $alasan = $_POST['alasan_penolakan'];
-        $stmt = $conn->prepare("UPDATE loans SET status_loan='rejected', alasan_penolakan=? WHERE id_loan=?");
-        $stmt->execute([$alasan, $id_loan]);
-        $message = "Peminjaman ditolak";
+        $alasan = trim($_POST['alasan_penolakan'] ?? '');
+
+        if ($alasan === '') {
+            $error = "Alasan penolakan harus diisi.";
+        } else {
+            $stmt = $conn->prepare("UPDATE loans SET status_loan='rejected', alasan_penolakan=? WHERE id_loan=? AND status_loan='pending'");
+            $stmt->execute([$alasan, $id_loan]);
+            $message = $stmt->rowCount() > 0 ? "Peminjaman ditolak" : "Peminjaman sudah diproses sebelumnya.";
+        }
     }
 }
 
@@ -56,8 +90,12 @@ $drivers = $conn->query("SELECT * FROM users WHERE role='supir'")->fetchAll();
     <div class="main-content">
         <h1>Persetujuan Peminjaman</h1>
         
-        <?php if(isset($message)): ?>
-            <div class="alert-box"><?= $message ?></div>
+        <?php if($message): ?>
+            <div class="alert-box"><?= e($message) ?></div>
+        <?php endif; ?>
+
+        <?php if($error): ?>
+            <div class="alert-box"><?= e($error) ?></div>
         <?php endif; ?>
         
         <div class="loan-list">
@@ -76,7 +114,7 @@ $drivers = $conn->query("SELECT * FROM users WHERE role='supir'")->fetchAll();
                         <?= date('m-d-Y', strtotime($loan['tgl_kembali'] ?? $loan['tgl_pinjam'])) ?>
                     </div>
 
-                    <button class="btn-detail" onclick='openModal(<?= json_encode($loan) ?>)'>Detail...</button>
+                    <button class="btn-detail" onclick='openModal(<?= json_encode($loan, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>)'>Detail...</button>
                 </div>
                 <?php endforeach; ?>
             <?php endif; ?>
@@ -120,13 +158,14 @@ $drivers = $conn->query("SELECT * FROM users WHERE role='supir'")->fetchAll();
                 <div id="driver_section" style="margin-top: 15px;">
                     <span class="driver-label">Pilih Driver (Khusus Mobil):</span>
                     <form method="POST" id="formApprove">
+                        <?= csrf_field() ?>
                         <input type="hidden" name="id_loan" id="input_id_loan_approve">
                         <input type="hidden" name="action" value="approve">
                         
                         <select name="driver_id" id="driver_select" class="input-driver">
                             <option value="">-- Tanpa Driver --</option>
                             <?php foreach($drivers as $driver): ?>
-                                <option value="<?= $driver['id_user'] ?>"><?= $driver['nama'] ?></option>
+                                <option value="<?= e($driver['id_user']) ?>"><?= e($driver['nama']) ?></option>
                             <?php endforeach; ?>
                         </select>
                     </form>
@@ -134,6 +173,7 @@ $drivers = $conn->query("SELECT * FROM users WHERE role='supir'")->fetchAll();
 
                 <div id="reject_section" style="display:none; margin-top:10px;">
                     <form method="POST" id="formReject">
+                        <?= csrf_field() ?>
                         <input type="hidden" name="id_loan" id="input_id_loan_reject">
                         <input type="hidden" name="action" value="reject">
                         <input type="text" name="alasan_penolakan" class="input-reason" style="display:block;" required placeholder="Alasan penolakan...">

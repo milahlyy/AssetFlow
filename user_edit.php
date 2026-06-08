@@ -8,16 +8,26 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+verify_csrf();
+
 $aksi = $_POST['aksi'] ?? '';
+$allowed_roles = ['hrga', 'pegawai', 'satpam', 'supir'];
 
 /* TAMBAH USER */
 if ($aksi === 'tambah') {
 
-    $nama     = $_POST['nama'];
-    $email    = $_POST['email'];
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-    $role     = $_POST['role'];
-    $divisi   = $_POST['divisi'];
+    $nama     = trim($_POST['nama'] ?? '');
+    $email    = filter_var(trim($_POST['email'] ?? ''), FILTER_VALIDATE_EMAIL);
+    $password_plain = $_POST['password'] ?? '';
+    $role     = $_POST['role'] ?? '';
+    $divisi   = trim($_POST['divisi'] ?? '');
+
+    if ($nama === '' || !$email || $password_plain === '' || !in_array($role, $allowed_roles, true)) {
+        header("Location: kelola_user.php?error=input");
+        exit;
+    }
+
+    $password = password_hash($password_plain, PASSWORD_DEFAULT);
 
     $stmt = $conn->prepare("
         INSERT INTO users (nama, email, password, role, divisi)
@@ -32,11 +42,16 @@ if ($aksi === 'tambah') {
 /*  EDIT USER */
 if ($aksi === 'edit') {
 
-    $id_user = $_POST['id_user'];
-    $nama    = $_POST['nama'];
-    $email   = $_POST['email'];
-    $role    = $_POST['role'];
-    $divisi  = $_POST['divisi'];
+    $id_user = filter_input(INPUT_POST, 'id_user', FILTER_VALIDATE_INT);
+    $nama    = trim($_POST['nama'] ?? '');
+    $email   = filter_var(trim($_POST['email'] ?? ''), FILTER_VALIDATE_EMAIL);
+    $role    = $_POST['role'] ?? '';
+    $divisi  = trim($_POST['divisi'] ?? '');
+
+    if (!$id_user || $nama === '' || !$email || !in_array($role, $allowed_roles, true)) {
+        header("Location: kelola_user.php?error=input");
+        exit;
+    }
 
     // Kalau password diisi → update
     if (!empty($_POST['password'])) {

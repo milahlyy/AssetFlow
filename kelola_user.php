@@ -3,60 +3,79 @@ require_once 'database/db.php';
 require_once 'auth_check.php';
 checkrole(['hrga']);
 
+$message = '';
+$error = '';
+$allowed_roles = ['hrga', 'pegawai', 'satpam', 'supir'];
+
 // HANDLE TAMBAH & UPDATE
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    verify_csrf();
+
+    if (isset($_POST['delete_user'])) {
+        $id_user = filter_input(INPUT_POST, 'id_user', FILTER_VALIDATE_INT);
+
+        if (!$id_user) {
+            $error = "Data user tidak valid.";
+        } else {
+            $stmt = $conn->prepare("DELETE FROM users WHERE id_user=?");
+            $stmt->execute([$id_user]);
+            $message = "User berhasil dihapus";
+        }
+    }
 
     // TAMBAH USER
     if (isset($_POST['tambah_user'])) {
-        $nama     = $_POST['nama'];
-        $email    = $_POST['email'];
-        $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-        $role     = $_POST['role'];
-        $divisi   = $_POST['divisi'];
+        $nama     = trim($_POST['nama'] ?? '');
+        $email    = filter_var(trim($_POST['email'] ?? ''), FILTER_VALIDATE_EMAIL);
+        $password_plain = $_POST['password'] ?? '';
+        $role     = $_POST['role'] ?? '';
+        $divisi   = trim($_POST['divisi'] ?? '');
 
-        $stmt = $conn->prepare(
-            "INSERT INTO users (nama, email, password, role, divisi)
-             VALUES (?, ?, ?, ?, ?)"
-        );
-        $stmt->execute([$nama, $email, $password, $role, $divisi]);
+        if ($nama === '' || !$email || $password_plain === '' || !in_array($role, $allowed_roles, true)) {
+            $error = "Input user tidak valid.";
+        } else {
+            $password = password_hash($password_plain, PASSWORD_DEFAULT);
+            $stmt = $conn->prepare(
+                "INSERT INTO users (nama, email, password, role, divisi)
+                 VALUES (?, ?, ?, ?, ?)"
+            );
+            $stmt->execute([$nama, $email, $password, $role, $divisi]);
 
-        $message = "User berhasil ditambahkan";
+            $message = "User berhasil ditambahkan";
+        }
     }
 
     // UPDATE USER
     if (isset($_POST['update_user'])) {
-        $id_user = $_POST['id_user'];
-        $nama    = $_POST['nama'];
-        $email   = $_POST['email'];
-        $role    = $_POST['role'];
-        $divisi  = $_POST['divisi'];
+        $id_user = filter_input(INPUT_POST, 'id_user', FILTER_VALIDATE_INT);
+        $nama    = trim($_POST['nama'] ?? '');
+        $email   = filter_var(trim($_POST['email'] ?? ''), FILTER_VALIDATE_EMAIL);
+        $role    = $_POST['role'] ?? '';
+        $divisi  = trim($_POST['divisi'] ?? '');
 
-        if (!empty($_POST['password'])) {
-            $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-            $stmt = $conn->prepare(
-                "UPDATE users
-                 SET nama=?, email=?, password=?, role=?, divisi=?
-                 WHERE id_user=?"
-            );
-            $stmt->execute([$nama, $email, $password, $role, $divisi, $id_user]);
+        if (!$id_user || $nama === '' || !$email || !in_array($role, $allowed_roles, true)) {
+            $error = "Input user tidak valid.";
         } else {
-            $stmt = $conn->prepare(
-                "UPDATE users
-                 SET nama=?, email=?, role=?, divisi=?
-                 WHERE id_user=?"
-            );
-            $stmt->execute([$nama, $email, $role, $divisi, $id_user]);
+            if (!empty($_POST['password'])) {
+                $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+                $stmt = $conn->prepare(
+                    "UPDATE users
+                     SET nama=?, email=?, password=?, role=?, divisi=?
+                     WHERE id_user=?"
+                );
+                $stmt->execute([$nama, $email, $password, $role, $divisi, $id_user]);
+            } else {
+                $stmt = $conn->prepare(
+                    "UPDATE users
+                     SET nama=?, email=?, role=?, divisi=?
+                     WHERE id_user=?"
+                );
+                $stmt->execute([$nama, $email, $role, $divisi, $id_user]);
+            }
+
+            $message = "User berhasil diperbarui";
         }
-
-        $message = "User berhasil diperbarui";
     }
-}
-
-//HANDLE HAPUS
-if (isset($_GET['delete'])) {
-    $stmt = $conn->prepare("DELETE FROM users WHERE id_user=?");
-    $stmt->execute([$_GET['delete']]);
-    $message = "User berhasil dihapus";
 }
 
 // AMBIL DATA USER
@@ -86,12 +105,17 @@ $users = $conn->query("SELECT * FROM users ORDER BY id_user DESC")->fetchAll();
 <div class="main-content">
     <h1>Kelola User</h1>
 
-    <?php if(isset($message)): ?>
-        <p style="color:green; font-weight:bold;"><?= $message ?></p>
+    <?php if($message): ?>
+        <p style="color:green; font-weight:bold;"><?= e($message) ?></p>
+    <?php endif; ?>
+
+    <?php if($error): ?>
+        <p style="color:red; font-weight:bold;"><?= e($error) ?></p>
     <?php endif; ?>
 
     <h2>Tambah User</h2>
     <form method="POST">
+        <?= csrf_field() ?>
         <label>Nama</label>
         <input type="text" name="nama" required>
 
@@ -129,23 +153,24 @@ $users = $conn->query("SELECT * FROM users ORDER BY id_user DESC")->fetchAll();
 
         <?php foreach($users as $u): ?>
         <tr>
-            <td><?= htmlspecialchars($u['nama']) ?></td>
-            <td><?= htmlspecialchars($u['email']) ?></td>
-            <td><?= $u['role'] ?></td>
-            <td><?= $u['divisi'] ?></td>
+            <td><?= e($u['nama']) ?></td>
+            <td><?= e($u['email']) ?></td>
+            <td><?= e($u['role']) ?></td>
+            <td><?= e($u['divisi']) ?></td>
             <td>
-                <button onclick="editUser(
-                    <?= $u['id_user'] ?>,
-                    '<?= htmlspecialchars($u['nama'], ENT_QUOTES) ?>',
-                    '<?= htmlspecialchars($u['email'], ENT_QUOTES) ?>',
-                    '<?= $u['role'] ?>',
-                    '<?= htmlspecialchars($u['divisi'], ENT_QUOTES) ?>'
-                )">Edit</button>
+                <button type="button" onclick='editUser(<?= json_encode([
+                    'id' => $u['id_user'],
+                    'nama' => $u['nama'],
+                    'email' => $u['email'],
+                    'role' => $u['role'],
+                    'divisi' => $u['divisi'],
+                ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>)'>Edit</button>
 
-                <a href="?delete=<?= $u['id_user'] ?>"
-                   onclick="return confirm('Yakin hapus user ini?')">
-                   Hapus
-                </a>
+                <form method="POST" style="display:inline;" onsubmit="return confirm('Yakin hapus user ini?')">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="id_user" value="<?= e($u['id_user']) ?>">
+                    <button type="submit" name="delete_user">Hapus</button>
+                </form>
             </td>
         </tr>
         <?php endforeach; ?>
@@ -166,6 +191,7 @@ $users = $conn->query("SELECT * FROM users ORDER BY id_user DESC")->fetchAll();
     <h2>Edit User</h2>
 
     <form method="POST">
+        <?= csrf_field() ?>
         <input type="hidden" name="id_user" id="edit_id">
 
         <label>Nama</label>
@@ -197,13 +223,13 @@ $users = $conn->query("SELECT * FROM users ORDER BY id_user DESC")->fetchAll();
 </div>
 
 <script>
-function editUser(id, nama, email, role, divisi) {
+function editUser(user) {
     document.getElementById('editUserForm').style.display = 'block';
-    edit_id.value     = id;
-    edit_nama.value   = nama;
-    edit_email.value  = email;
-    edit_role.value   = role;
-    edit_divisi.value = divisi;
+    edit_id.value     = user.id;
+    edit_nama.value   = user.nama || '';
+    edit_email.value  = user.email || '';
+    edit_role.value   = user.role;
+    edit_divisi.value = user.divisi || '';
 }
 </script>
 

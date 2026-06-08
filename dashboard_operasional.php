@@ -16,7 +16,6 @@ $userId = $_SESSION['user_id'];
     <title>Dashboard Operasional</title>
     <link rel="stylesheet" href="css/dash_opera.css">
 </head>
-</head>
 <body>
 
 <div class="sidebar">
@@ -31,8 +30,8 @@ $userId = $_SESSION['user_id'];
 <div class="main-content">
 
     <div class="page-header">
-        <h1>Dashboard <?php echo ucfirst($role); ?></h1>
-        <p>Halo, <strong><?php echo $nama; ?></strong></p>
+        <h1>Dashboard <?php echo e(ucfirst($role)); ?></h1>
+        <p>Halo, <strong><?php echo e($nama); ?></strong></p>
         
     </div>
 
@@ -71,21 +70,21 @@ $userId = $_SESSION['user_id'];
             <?php foreach($list as $row): ?>
             <tr>
                 <td>
-                    <b><?php echo $row['nama_aset']; ?></b><br>
-                    <?php echo $row['plat_nomor']; ?>
+                    <b><?php echo e($row['nama_aset']); ?></b><br>
+                    <?php echo e($row['plat_nomor']); ?>
                 </td>
-                <td><?php echo $row['peminjam']; ?></td>
-                <td><?php echo htmlspecialchars($row['keterangan']); ?></td>                 <td>
+                <td><?php echo e($row['peminjam']); ?></td>
+                <td><?php echo e($row['keterangan']); ?></td>                 <td>
                     <?php 
                     if($row['status_loan'] == 'approved') echo "Belum Berangkat";
                     elseif($row['status_loan'] == 'on_loan') echo "Sedang Diluar";
                     elseif($row['status_loan'] == 'returned') echo "Sudah Kembali (Data Belum Lengkap)";
                     ?>
                 </td>
-                <td><?php echo $row['jam_keluar'] ? $row['jam_keluar'] : '-'; ?></td>
-                <td><?php echo $row['jam_masuk'] ? $row['jam_masuk'] : '-'; ?></td>
+                <td><?php echo $row['jam_keluar'] ? e($row['jam_keluar']) : '-'; ?></td>
+                <td><?php echo $row['jam_masuk'] ? e($row['jam_masuk']) : '-'; ?></td>
                 <td>
-                    <a href="form_satpam.php?id_loan=<?php echo $row['id_loan']; ?>">Update Log</a>
+                    <a href="form_satpam.php?id_loan=<?php echo e($row['id_loan']); ?>">Update Log</a>
                 </td>
             </tr>
             <?php endforeach; ?>
@@ -126,13 +125,13 @@ $userId = $_SESSION['user_id'];
             </tr>
             <?php foreach($tasks as $t): ?>
             <tr>
-                <td><?php echo $t['tgl_pinjam']; ?></td>
-                <td><?php echo $t['nama_aset']; ?> (<?php echo $t['plat_nomor']; ?>)</td>
-                <td><?php echo $t['peminjam']; ?></td>
-                <td><?php echo htmlspecialchars($t['keterangan']); ?></td> <td><?php echo $t['km_awal'] ? $t['km_awal'] : '-'; ?></td>
-                <td><?php echo $t['km_akhir'] ? $t['km_akhir'] : '-'; ?></td>
+                <td><?php echo e($t['tgl_pinjam']); ?></td>
+                <td><?php echo e($t['nama_aset']); ?> (<?php echo e($t['plat_nomor']); ?>)</td>
+                <td><?php echo e($t['peminjam']); ?></td>
+                <td><?php echo e($t['keterangan']); ?></td> <td><?php echo $t['km_awal'] ? e($t['km_awal']) : '-'; ?></td>
+                <td><?php echo $t['km_akhir'] ? e($t['km_akhir']) : '-'; ?></td>
                 <td>
-                    <a href="form_supir.php?id_loan=<?php echo $t['id_loan']; ?>">Update Laporan</a>
+                    <a href="form_supir.php?id_loan=<?php echo e($t['id_loan']); ?>">Update Laporan</a>
                 </td>
             </tr>
             <?php endforeach; ?>

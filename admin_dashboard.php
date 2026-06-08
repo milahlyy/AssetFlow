@@ -133,7 +133,7 @@ $recent_pending = $conn->query("
                             <td><?= date('d/m', strtotime($a['tgl_pinjam'])) ?></td>
                             <td><?= htmlspecialchars($a['pemohon']) ?></td>
                             <td><?= htmlspecialchars($a['nama_aset']) ?></td>
-                            <td><span class="badge <?= $a['status_loan'] ?>"><?= $a['status_loan'] ?></span></td>
+                            <td><span class="badge <?= e($a['status_loan']) ?>"><?= e($a['status_loan']) ?></span></td>
                         </tr>
                         <?php endforeach; ?>
                     </table>
@@ -150,7 +150,7 @@ $recent_pending = $conn->query("
                 <tr><th>Status</th><th>Jumlah</th></tr>
                 <?php foreach($asset_status as $status): ?>
                 <tr>
-                    <td><?= $status['status_aset'] ?></td>
+                    <td><?= e($status['status_aset']) ?></td>
                     <td><b><?= $status['jumlah'] ?></b></td>
                 </tr>
                 <?php endforeach; ?>

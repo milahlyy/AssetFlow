@@ -108,10 +108,10 @@ ALTER TABLE `users`
   MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 ALTER TABLE `assets`
-  MODIFY `id_aset` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_aset` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 ALTER TABLE `loans`
-  MODIFY `id_loan` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_loan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for table `loans`
@@ -120,8 +120,6 @@ ALTER TABLE `loans`
   ADD CONSTRAINT `loans_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`) ON DELETE CASCADE,
   ADD CONSTRAINT `loans_ibfk_2` FOREIGN KEY (`id_aset`) REFERENCES `assets` (`id_aset`) ON DELETE CASCADE,
   ADD CONSTRAINT `loans_ibfk_3` FOREIGN KEY (`driver_id`) REFERENCES `users` (`id_user`) ON DELETE SET NULL;
-
-COMMIT;
 
 -- SKENARIO 1: BARU DISETUJUI (Siap Berangkat)
 -- Satpam: Perlu isi Jam Keluar.
@@ -134,9 +132,11 @@ INSERT INTO loans (id_loan, id_user, id_aset, driver_id, tgl_pinjam, tgl_kembali
 -- Satpam: Perlu isi Jam Masuk (Saat pulang).
 -- Supir: Perlu isi KM Akhir (KM Masuk).
 INSERT INTO loans (id_loan, id_user, id_aset, driver_id, tgl_pinjam, tgl_kembali, jam_keluar, jam_masuk, km_awal, km_akhir, kondisi_mobil, keterangan, status_loan) VALUES
-(2, 2, 2, 4, CURDATE(), CURDATE(), CONCAT(CURDATE(), ' 08:00:00'), NULL, 50000, NULL, 'Bodi mulus, bensin full', 'Meeting di Jakarta (Sedang Jalan)', 'on_loan');
+(2, 2, 2, 4, CURDATE(), CURDATE(), CONCAT(CURDATE(), ' 08:00:00'), NULL, 50000, NULL, 'Bodi mulus, bensin full', 'Meeting di Jakarta (Sedang Jalan)', 'on_loan');
 
 INSERT INTO assets (id_aset, nama_aset, kategori, plat_nomor, status_aset, gambar) VALUES
 (5, 'Iphone 17', 'elektronik', NULL, 'tersedia', 'Iphone.jpg'),
 (6, 'Kamera Canon', 'elektronik', NULL, 'maintenance', 'canon.jpg'),
-(7, 'Kamera Olympus', 'elektronik', NULL, 'tersedia', 'olympus.jpg');
+(7, 'Kamera Olympus', 'elektronik', NULL, 'tersedia', 'olympus.jpg');
+
+COMMIT;

@@ -31,20 +31,28 @@ if (!$data) {
 
 // Proses simpan
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $km_awal   = $_POST['km_awal'];
-    $km_akhir  = $_POST['km_akhir'];
+    verify_csrf();
+
+    $km_awal   = $_POST['km_awal'] !== '' ? $_POST['km_awal'] : null;
+    $km_akhir  = $_POST['km_akhir'] !== '' ? $_POST['km_akhir'] : null;
     $kondisi   = $_POST['kondisi_mobil'];
-    $id_target = $_POST['id_loan'];
+    $id_target = $data['id_loan'];
 
     $update = $conn->prepare("
         UPDATE loans 
         SET km_awal = :ka, km_akhir = :kk, kondisi_mobil = :km
         WHERE id_loan = :id
+          AND driver_id = :did
+          AND (
+              status_loan IN ('approved', 'on_loan')
+              OR (status_loan = 'returned' AND (km_awal IS NULL OR km_akhir IS NULL OR kondisi_mobil IS NULL))
+          )
     ");
     $update->bindParam(':ka', $km_awal);
     $update->bindParam(':kk', $km_akhir);
     $update->bindParam(':km', $kondisi);
     $update->bindParam(':id', $id_target);
+    $update->bindParam(':did', $my_id);
 
     if ($update->execute()) {
         $pesan = "Laporan perjalanan tersimpan!";
@@ -69,24 +77,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <div class="card">
 
     <?php if ($pesan): ?>
-        <div class="success"><?= $pesan ?></div>
+        <div class="success"><?= e($pesan) ?></div>
     <?php endif; ?>
 
     <div class="info">
-        Mobil: <strong><?= htmlspecialchars($data['nama_aset']) ?> - <?= htmlspecialchars($data['plat_nomor']) ?></strong>
+        Mobil: <strong><?= e($data['nama_aset']) ?> - <?= e($data['plat_nomor']) ?></strong>
     </div>
 
     <form method="POST">
-        <input type="hidden" name="id_loan" value="<?= $data['id_loan'] ?>">
+        <?= csrf_field() ?>
+        <input type="hidden" name="id_loan" value="<?= e($data['id_loan']) ?>">
 
         <label>KM Awal (Sebelum Jalan)</label>
-        <input type="number" name="km_awal" value="<?= $data['km_awal'] ?>">
+        <input type="number" name="km_awal" value="<?= e($data['km_awal']) ?>">
 
         <label>KM Akhir (Setelah Pulang)</label>
-        <input type="number" name="km_akhir" value="<?= $data['km_akhir'] ?>">
+        <input type="number" name="km_akhir" value="<?= e($data['km_akhir']) ?>">
 
         <label>Kondisi Mobil</label>
-        <textarea name="kondisi_mobil" rows="5"><?= $data['kondisi_mobil'] ?></textarea>
+        <textarea name="kondisi_mobil" rows="5"><?= e($data['kondisi_mobil']) ?></textarea>
 
         <button type="submit">SIMPAN LAPORAN</button>
     </form>

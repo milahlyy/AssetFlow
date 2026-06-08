@@ -74,17 +74,17 @@ $result = $stmt->fetchAll();
             ?>
             <tr>
                 <td><?php echo $no++; ?></td>
-                <td><?php echo $row['tgl_pinjam']; ?></td>
-                <td><?php echo htmlspecialchars($row['nama_aset']); ?></td>
-                <td><?php echo htmlspecialchars($row['plat_nomor']); ?></td>
-                <td><?php echo htmlspecialchars($row['peminjam']); ?></td>
-                <td><?php echo htmlspecialchars($row['keterangan']); ?></td> <td><?php echo $row['jam_keluar'] ? date('H:i', strtotime($row['jam_keluar'])) : '-'; ?></td>
-                <td><?php echo $row['jam_masuk'] ? date('H:i', strtotime($row['jam_masuk'])) : '-'; ?></td>
+                <td><?php echo e($row['tgl_pinjam']); ?></td>
+                <td><?php echo e($row['nama_aset']); ?></td>
+                <td><?php echo e($row['plat_nomor']); ?></td>
+                <td><?php echo e($row['peminjam']); ?></td>
+                <td><?php echo e($row['keterangan']); ?></td> <td><?php echo $row['jam_keluar'] ? e(date('H:i', strtotime($row['jam_keluar']))) : '-'; ?></td>
+                <td><?php echo $row['jam_masuk'] ? e(date('H:i', strtotime($row['jam_masuk']))) : '-'; ?></td>
                 
-                <td><?php echo $row['km_awal'] ? number_format($row['km_awal']) : '-'; ?></td>
-                <td><?php echo $row['km_akhir'] ? number_format($row['km_akhir']) : '-'; ?></td>
+                <td><?php echo $row['km_awal'] ? e(number_format($row['km_awal'])) : '-'; ?></td>
+                <td><?php echo $row['km_akhir'] ? e(number_format($row['km_akhir'])) : '-'; ?></td>
                 
-                <td><?php echo $row['status_loan']; ?></td>
+                <td><?php echo e($row['status_loan']); ?></td>
             </tr>
             <?php 
                 endforeach; 
