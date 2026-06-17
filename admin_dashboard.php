@@ -4,7 +4,7 @@ require_once 'auth_check.php';
 checkrole(['hrga']);
 
 // Get statistics
-$total_assets = $conn->query("SELECT COUNT(*) FROM assets")->fetchColumn();
+$total_assets = $conn->query("SELECT COUNT(*) FROM assets WHERE deleted_at IS NULL")->fetchColumn();
 $total_loans = $conn->query("SELECT COUNT(*) FROM loans")->fetchColumn();
 $pending_loans = $conn->query("SELECT COUNT(*) FROM loans WHERE status_loan='pending'")->fetchColumn();
 $active_loans = $conn->query("SELECT COUNT(*) FROM loans WHERE status_loan IN ('approved','on_loan')")->fetchColumn();
@@ -16,6 +16,7 @@ $recent_pending = $conn->query("
     JOIN users u ON l.id_user = u.id_user 
     JOIN assets a ON l.id_aset = a.id_aset 
     WHERE l.status_loan='pending' 
+      AND a.deleted_at IS NULL
     ORDER BY l.tgl_pinjam ASC 
     LIMIT 5
 ")->fetchAll();
@@ -25,7 +26,7 @@ $recent_pending = $conn->query("
 <html>
 <head>
     <title>Dashboard HRGA</title>
-    <link rel="stylesheet" href="css/admindash.css">
+    <link rel="stylesheet" href="css/admindash.css?v=20260617-2">
 </head>
 <body>
     
@@ -41,7 +42,7 @@ $recent_pending = $conn->query("
 
     <div class="main-content">
         <h1>Dashboard HRGA</h1>
-        <p class="welcome">Selamat datang, <b><?= htmlspecialchars($_SESSION['nama']) ?></b></p>
+        <p class="welcome">Selamat datang, <b><?= e($_SESSION['nama']) ?></b></p>
         
         <h2>Statistik</h2>
         <div class="stats-grid">
@@ -67,7 +68,7 @@ $recent_pending = $conn->query("
             </div>
         </div>
         
-        <!<h2>Quick Actions</h2>
+        <h2>Quick Actions</h2>
         <div class="quick-actions">
             <a href="kelola_aset.php" class="btn-blue">Kelola Aset</a>
             <a href="persetujuan.php" class="btn-yellow">Persetujuan Peminjaman</a>
@@ -92,8 +93,8 @@ $recent_pending = $conn->query("
                         <?php foreach($recent_pending as $index => $p): ?>
                         <tr>
                             <td><?= date('d/m', strtotime($p['tgl_pinjam'])) ?></td>
-                            <td><?= htmlspecialchars($p['pemohon']) ?></td>
-                            <td><?= htmlspecialchars($p['nama_aset']) ?></td>
+                            <td><?= e($p['pemohon']) ?></td>
+                            <td><?= e($p['nama_aset']) ?></td>
                             <td><a href="persetujuan.php" class="btn-action">Cek</a></td>
                         </tr>
                         <?php endforeach; ?>
@@ -131,9 +132,9 @@ $recent_pending = $conn->query("
                         <?php foreach($recent_activities as $a): ?>
                         <tr>
                             <td><?= date('d/m', strtotime($a['tgl_pinjam'])) ?></td>
-                            <td><?= htmlspecialchars($a['pemohon']) ?></td>
-                            <td><?= htmlspecialchars($a['nama_aset']) ?></td>
-                            <td><span class="badge <?= $a['status_loan'] ?>"><?= $a['status_loan'] ?></span></td>
+                            <td><?= e($a['pemohon']) ?></td>
+                            <td><?= e($a['nama_aset']) ?></td>
+                            <td><span class="badge <?= e($a['status_loan']) ?>"><?= e($a['status_loan']) ?></span></td>
                         </tr>
                         <?php endforeach; ?>
                     </table>
@@ -144,13 +145,13 @@ $recent_pending = $conn->query("
         </div> <div class="box-container full-width">
             <h2>Status Aset</h2>
             <?php
-            $asset_status = $conn->query("SELECT status_aset, COUNT(*) as jumlah FROM assets GROUP BY status_aset")->fetchAll();
+            $asset_status = $conn->query("SELECT status_aset, COUNT(*) as jumlah FROM assets WHERE deleted_at IS NULL GROUP BY status_aset")->fetchAll();
             ?>
             <table class="simple-table">
                 <tr><th>Status</th><th>Jumlah</th></tr>
                 <?php foreach($asset_status as $status): ?>
                 <tr>
-                    <td><?= $status['status_aset'] ?></td>
+                    <td><?= e($status['status_aset']) ?></td>
                     <td><b><?= $status['jumlah'] ?></b></td>
                 </tr>
                 <?php endforeach; ?>

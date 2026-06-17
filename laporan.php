@@ -8,6 +8,16 @@ $start_date = $_GET['start_date'] ?? date('Y-m-01');
 $end_date = $_GET['end_date'] ?? date('Y-m-t');
 $status = $_GET['status'] ?? '';
 $kategori = $_GET['kategori'] ?? '';
+$allowed_statuses = ['pending', 'approved', 'rejected', 'on_loan', 'returned'];
+$allowed_categories = ['mobil', 'elektronik'];
+
+if ($status !== '' && !in_array($status, $allowed_statuses, true)) {
+    $status = '';
+}
+
+if ($kategori !== '' && !in_array($kategori, $allowed_categories, true)) {
+    $kategori = '';
+}
 
 // Build query
 $query = "
@@ -43,12 +53,14 @@ $total = count($reports);
 $approved = 0;
 $rejected = 0;
 $pending = 0;
+$returned = 0;
 
 foreach($reports as $r) {
     switch($r['status_loan']) {
         case 'approved': $approved++; break;
         case 'rejected': $rejected++; break;
         case 'pending': $pending++; break;
+        case 'returned': $returned++; break;
     }
 }
 ?>
@@ -57,7 +69,7 @@ foreach($reports as $r) {
 <html>
 <head>
     <title>Laporan Peminjaman</title>
-    <link rel="stylesheet" href="css/laporan_adm.css">
+    <link rel="stylesheet" href="css/laporan_adm.css?v=20260617-2">
 </head>
 <body>
 
@@ -77,12 +89,12 @@ foreach($reports as $r) {
         <form method="GET" class="filter-card">
             <div class="filter-group">
                 <label>Tanggal Mulai</label>
-                <input type="date" name="start_date" value="<?= $start_date ?>">
+                <input type="date" name="start_date" value="<?= e($start_date) ?>">
             </div>
             
             <div class="filter-group">
                 <label>Tanggal Akhir</label>
-                <input type="date" name="end_date" value="<?= $end_date ?>">
+                <input type="date" name="end_date" value="<?= e($end_date) ?>">
             </div>
             
             <div class="filter-group">
@@ -92,6 +104,8 @@ foreach($reports as $r) {
                     <option value="pending" <?= $status=='pending'?'selected':'' ?>>Pending</option>
                     <option value="approved" <?= $status=='approved'?'selected':'' ?>>Approved</option>
                     <option value="rejected" <?= $status=='rejected'?'selected':'' ?>>Rejected</option>
+                    <option value="on_loan" <?= $status=='on_loan'?'selected':'' ?>>On Loan</option>
+                    <option value="returned" <?= $status=='returned'?'selected':'' ?>>Returned</option>
                 </select>
             </div>
             
@@ -124,6 +138,10 @@ foreach($reports as $r) {
                 <h4>PENDING</h4>
                 <div class="number"><?= $pending ?></div>
             </div>
+            <div class="stat-box stat-total">
+                <h4>RETURNED</h4>
+                <div class="number"><?= $returned ?></div>
+            </div>
         </div>
         
         <h3>Detail Laporan</h3>
@@ -142,6 +160,7 @@ foreach($reports as $r) {
                             <th>Kategori</th>
                             <th>Status</th>
                             <th>Driver</th>
+                            <th>Dikembalikan</th>
                             <th>Ket/Alasan</th>
                         </tr>
                     </thead>
@@ -150,17 +169,18 @@ foreach($reports as $r) {
                         <tr>
                             <td><?= $index+1 ?></td>
                             <td><?= date('d/m/Y', strtotime($r['tgl_pinjam'])) ?></td>
-                            <td><?= htmlspecialchars($r['pemohon']) ?></td>
-                            <td><?= $r['divisi'] ?></td>
-                            <td><?= htmlspecialchars($r['nama_aset']) ?></td>
-                            <td><?= ucfirst($r['kategori']) ?></td>
+                            <td><?= e($r['pemohon']) ?></td>
+                            <td><?= e($r['divisi']) ?></td>
+                            <td><?= e($r['nama_aset']) ?></td>
+                            <td><?= e(ucfirst($r['kategori'])) ?></td>
                             <td>
-                                <span class="status-badge status-<?= $r['status_loan'] ?>">
-                                    <?= ucfirst($r['status_loan']) ?>
+                                <span class="status-badge status-<?= e($r['status_loan']) ?>">
+                                    <?= e(ucfirst($r['status_loan'])) ?>
                                 </span>
                             </td>
-                            <td><?= $r['driver'] ?: '-' ?></td>
-                            <td><?= $r['alasan_penolakan'] ?: '-' ?></td>
+                            <td><?= e($r['driver'] ?: '-') ?></td>
+                            <td><?= $r['returned_at'] ? e(date('d/m/Y H:i', strtotime($r['returned_at']))) : '-' ?></td>
+                            <td><?= e($r['alasan_penolakan'] ?: $r['keterangan']) ?></td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>
