@@ -69,7 +69,7 @@ foreach($reports as $r) {
 <html>
 <head>
     <title>Laporan Peminjaman</title>
-    <link rel="stylesheet" href="css/laporan_adm.css">
+    <link rel="stylesheet" href="css/laporan_adm.css?v=20260617-2">
 </head>
 <body>
 

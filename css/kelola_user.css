@@ -86,7 +86,8 @@ h1 {
 }
 
 /*  FORM TAMBAH & EDIT USER */
-form {
+.main-content > form,
+#editUserForm form {
     background: #FFFFFF;
     padding: 25px;
     border-radius: 15px;
@@ -95,15 +96,20 @@ form {
     margin-bottom: 40px;
 }
 
-form label {
+.main-content > form label,
+#editUserForm form label {
     font-weight: 600;
     font-size: 14px;
 }
 
-form input[type="text"],
-form input[type="email"],
-form input[type="password"],
-form select {
+.main-content > form input[type="text"],
+.main-content > form input[type="email"],
+.main-content > form input[type="password"],
+.main-content > form select,
+#editUserForm form input[type="text"],
+#editUserForm form input[type="email"],
+#editUserForm form input[type="password"],
+#editUserForm form select {
     width: 100%;
     padding: 10px 15px;
     margin: 8px 0 20px 0;
@@ -113,15 +119,18 @@ form select {
     background-color: #F8FAFC;
 }
 
-form input:focus,
-form select:focus {
+.main-content > form input:focus,
+.main-content > form select:focus,
+#editUserForm form input:focus,
+#editUserForm form select:focus {
     outline: none;
     border-color: #64FFDA;
     background-color: #FFFFFF;
     box-shadow: 0 0 0 3px rgba(100, 255, 218, 0.2);
 }
 
-form button {
+.main-content > form button,
+#editUserForm form button {
     background-color: #0A192F;
     color: #64FFDA;
     padding: 12px 20px;
@@ -133,18 +142,19 @@ form button {
     transition: 0.3s;
 }
 
-form button:hover {
+.main-content > form button:hover,
+#editUserForm form button:hover {
     background-color: #1C2A44;
 }
 
 /* Tombol batal (popup edit) */
-form button[type="button"] {
+#editUserForm form button[type="button"] {
     background-color: #E2E8F0;
     color: #475569;
     margin-left: 10px;
 }
 
-form button[type="button"]:hover {
+#editUserForm form button[type="button"]:hover {
     background-color: #CBD5E1;
 }
 
@@ -190,7 +200,8 @@ table tr:hover {
 }
 
 .inline-delete-form {
-    display: inline;
+    display: inline-flex;
+    align-items: center;
     background: transparent;
     padding: 0;
     border-radius: 0;

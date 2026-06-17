@@ -92,7 +92,8 @@ p {
 }
 
 /* FORM  */
-form {
+.main-content > form,
+#editFormContent {
     background: #FFFFFF;
     padding: 25px;
     border-radius: 15px;
@@ -101,9 +102,12 @@ form {
     margin-bottom: 40px;
 }
 
-form input[type="text"],
-form select,
-form input[type="file"] {
+.main-content > form input[type="text"],
+.main-content > form select,
+.main-content > form input[type="file"],
+#editFormContent input[type="text"],
+#editFormContent select,
+#editFormContent input[type="file"] {
     width: 100%;
     padding: 10px 15px;
     margin: 8px 0 20px 0;
@@ -115,15 +119,18 @@ form input[type="file"] {
     background-color: #F8FAFC;
 }
 
-form input:focus,
-form select:focus {
+.main-content > form input:focus,
+.main-content > form select:focus,
+#editFormContent input:focus,
+#editFormContent select:focus {
     outline: none;
     border-color: #64FFDA;
     background-color: #fff;
     box-shadow: 0 0 0 3px rgba(100, 255, 218, 0.2);
 }
 
-form button {
+.main-content > form button,
+#editFormContent button {
     background-color: #0A192F;
     color: #64FFDA;
     padding: 12px 20px;
@@ -135,18 +142,19 @@ form button {
     transition: 0.3s;
 }
 
-form button:hover {
+.main-content > form button:hover,
+#editFormContent button:hover {
     background-color: #1C2A44;
 }
 
 /* Tombol Batal di Modal */
-form button[type="button"] {
+#editFormContent button[type="button"] {
     background-color: #E2E8F0;
     color: #475569;
     margin-left: 10px;
 }
 
-form button[type="button"]:hover {
+#editFormContent button[type="button"]:hover {
     background-color: #CBD5E1;
 }
 
@@ -201,7 +209,8 @@ table img {
 }
 
 .inline-delete-form {
-    display: inline;
+    display: inline-flex;
+    align-items: center;
     background: transparent;
     padding: 0;
     border-radius: 0;

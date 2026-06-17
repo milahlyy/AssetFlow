@@ -166,7 +166,7 @@ $assets = $conn->query("SELECT * FROM assets WHERE deleted_at IS NULL ORDER BY i
 <html>
 <head>
     <title>Kelola Aset</title>
-    <link rel="stylesheet" href="css/kelola_aset.css">
+    <link rel="stylesheet" href="css/kelola_aset.css?v=20260617-2">
 </head>
 <body>
 

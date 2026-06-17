@@ -101,7 +101,7 @@ $users = $conn->query("SELECT * FROM users WHERE deleted_at IS NULL ORDER BY id_
 <head>
     <meta charset="UTF-8">
     <title>Kelola User</title>
-    <link rel="stylesheet" href="css/kelola_user.css">
+    <link rel="stylesheet" href="css/kelola_user.css?v=20260617-2">
 </head>
 <body>
 

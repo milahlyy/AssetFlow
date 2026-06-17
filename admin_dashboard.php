@@ -26,7 +26,7 @@ $recent_pending = $conn->query("
 <html>
 <head>
     <title>Dashboard HRGA</title>
-    <link rel="stylesheet" href="css/admindash.css">
+    <link rel="stylesheet" href="css/admindash.css?v=20260617-2">
 </head>
 <body>
     
