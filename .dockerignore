@@ -2,3 +2,4 @@
 .agents
 .codex
 docs
+php-server*.log
