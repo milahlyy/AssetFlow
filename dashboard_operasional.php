@@ -54,7 +54,7 @@ $userId = $_SESSION['user_id'];
                     )
                   ORDER BY l.status_loan ASC";
         $stmt = $conn->prepare($query);
-        $stmt->execute();
+        $stmt->execute(); 
         $list = $stmt->fetchAll();
         ?>
 

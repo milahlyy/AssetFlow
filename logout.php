@@ -7,6 +7,9 @@ session_start();
 // Mengkosongkan semua data session
 $_SESSION = array();
 
+// Menghapus session secara eksplisit
+session_unset();
+
 // Menghancurkan session sepenuhnya
 session_destroy();
 
