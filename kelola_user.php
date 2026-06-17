@@ -171,20 +171,22 @@ $users = $conn->query("SELECT * FROM users WHERE deleted_at IS NULL ORDER BY id_
             <td><?= e($u['email']) ?></td>
             <td><?= e($u['role']) ?></td>
             <td><?= e($u['divisi']) ?></td>
-            <td>
-                <button type="button" onclick='editUser(<?= json_encode([
+            <td class="action-cell">
+                <div class="table-actions">
+                    <button type="button" class="btn-action btn-edit" onclick='editUser(<?= json_encode([
                     'id' => $u['id_user'],
                     'nama' => $u['nama'],
                     'email' => $u['email'],
                     'role' => $u['role'],
                     'divisi' => $u['divisi'],
-                ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>)'>Edit</button>
+                    ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>)'>Edit</button>
 
-                <form method="POST" style="display:inline;" onsubmit="return confirm('Yakin hapus user ini?')">
-                    <?= csrf_field() ?>
-                    <input type="hidden" name="id_user" value="<?= e($u['id_user']) ?>">
-                    <button type="submit" name="delete_user">Hapus</button>
-                </form>
+                    <form method="POST" class="inline-delete-form" onsubmit="return confirm('Yakin hapus user ini?')">
+                        <?= csrf_field() ?>
+                        <input type="hidden" name="id_user" value="<?= e($u['id_user']) ?>">
+                        <button type="submit" name="delete_user" class="btn-action btn-delete">Hapus</button>
+                    </form>
+                </div>
             </td>
         </tr>
         <?php endforeach; ?>

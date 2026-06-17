@@ -68,7 +68,7 @@ $recent_pending = $conn->query("
             </div>
         </div>
         
-        <!<h2>Quick Actions</h2>
+        <h2>Quick Actions</h2>
         <div class="quick-actions">
             <a href="kelola_aset.php" class="btn-blue">Kelola Aset</a>
             <a href="persetujuan.php" class="btn-yellow">Persetujuan Peminjaman</a>

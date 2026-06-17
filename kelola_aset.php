@@ -245,19 +245,21 @@ $assets = $conn->query("SELECT * FROM assets WHERE deleted_at IS NULL ORDER BY i
                     <td><?= e($asset['kategori']) ?></td>
                     <td><?= e($asset['plat_nomor'] ?: '-') ?></td>
                     <td><?= e($asset['status_aset']) ?></td>
-                    <td>
-                        <button type="button" onclick='editAset(<?= json_encode([
+                    <td class="action-cell">
+                        <div class="table-actions">
+                            <button type="button" class="btn-action btn-edit" onclick='editAset(<?= json_encode([
                             'id' => $asset['id_aset'],
                             'nama' => $asset['nama_aset'],
                             'kategori' => $asset['kategori'],
                             'plat' => $asset['plat_nomor'],
                             'status' => $asset['status_aset'],
-                        ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>)'>Edit</button>
-                        <form method="POST" style="display:inline;" onsubmit="return confirm('Yakin akan menghapus aset ini?')">
-                            <?= csrf_field() ?>
-                            <input type="hidden" name="id_aset" value="<?= e($asset['id_aset']) ?>">
-                            <button type="submit" name="delete_aset">Hapus</button>
-                        </form>
+                            ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>)'>Edit</button>
+                            <form method="POST" class="inline-delete-form" onsubmit="return confirm('Yakin akan menghapus aset ini?')">
+                                <?= csrf_field() ?>
+                                <input type="hidden" name="id_aset" value="<?= e($asset['id_aset']) ?>">
+                                <button type="submit" name="delete_aset" class="btn-action btn-delete">Hapus</button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 <?php endforeach; ?>

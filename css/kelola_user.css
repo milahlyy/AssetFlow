@@ -179,9 +179,32 @@ table tr:hover {
 }
 
 /*  TOMBOL AKSI */
-table button,
-table a {
-    display: inline-block;
+.action-cell {
+    white-space: nowrap;
+}
+
+.table-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.inline-delete-form {
+    display: inline;
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    max-width: none;
+    margin: 0;
+}
+
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 58px;
+    height: 34px;
     padding: 6px 12px;
     border-radius: 6px;
     font-size: 12px;
@@ -194,20 +217,20 @@ table a {
 }
 
 /* Edit */
-table button {
+.btn-edit {
     background-color: #FFC107;
     color: #000;
 }
-table button:hover {
+.btn-edit:hover {
     background-color: #e0a800;
 }
 
 /* Hapus */
-table a {
+.btn-delete {
     background-color: #DC3545;
     color: #fff;
 }
-table a:hover {
+.btn-delete:hover {
     background-color: #bb2d3b;
 }
 
