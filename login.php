@@ -16,11 +16,30 @@ if (isset($_SESSION['user_id'])) {
 
 $error = '';
 
+if (!isset($_SESSION['login_attempts'])) {
+    $_SESSION['login_attempts'] = 0;
+}
+
+if (
+    isset($_SESSION['lockout_time']) &&
+    time() < $_SESSION['lockout_time']
+) {
+    $sisaMenit = ceil( ($_SESSION['lockout_time'] - time()) / 60 );
+    $error = "Terlalu banyak percobaan login. Coba lagi dalam $sisaMenit menit.";
+}
+
 // proses login jika user belum login dan menekan tombol login
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if ( isset($_SESSION['lockout_time']) && 
+    time() < $_SESSION['lockout_time'] ) { 
+        $sisaMenit = ceil( 
+            ($_SESSION['lockout_time'] - time()) / 60 ); 
+            $error = "Terlalu banyak percobaan login. Coba lagi dalam $sisaMenit menit."; } 
+        else {
     $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
     $password = $_POST['password'];
-
+        
+           
     // Validasi format email
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = "Format email tidak valid.";
@@ -44,6 +63,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_SESSION['role'] = $user['role'];
                 $_SESSION['divisi'] = $user['divisi'];
                 $_SESSION['last_activity'] = time(); // Set waktu aktivitas untuk timeout
+                $_SESSION['login_attempts'] = 0;
+                unset($_SESSION['lockout_time']);
 
                 // Arahkan ke dashboard sesuai role
                 if ($user['role'] === 'hrga'){
@@ -55,14 +76,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
                 exit();
             } else {
-                $error = "Email atau Password salah.";
-            }
+                $_SESSION['login_attempts']++;
+                if ($_SESSION['login_attempts'] >= 5) {
+                    $_SESSION['lockout_time'] = time() + 300;
+                    $error = "Terlalu banyak percobaan login. Akun dikunci selama 5 menit.";
+                } else {
+                    $sisa = 5 - $_SESSION['login_attempts'];
+                    $error = "Email atau Password salah. Sisa percobaan login: $sisa";
+                }
+                }
+
         } catch (PDOException $e) {
             // Log error ke file log (jangan tampilkan ke user)
             error_log("Login error: " . $e->getMessage());
             $error = "Email atau Password salah.";
         }
     } 
+}
+
 }
 ?>
 

@@ -14,6 +14,15 @@ try {
 
 // Mulai sesi otomatis untuk semua halaman yang memanggil file ini
 if (session_status() === PHP_SESSION_NONE) {
+
+    session_set_cookie_params([
+        'lifetime' => 0,
+        'path' => '/',
+        'httponly' => true,
+        'secure' => !empty($_SERVER['HTTPS']),
+        'samesite' => 'Strict'
+    ]);
+
     session_start();
 }
 
