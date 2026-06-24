@@ -34,12 +34,17 @@ try {
 
 // Mulai sesi otomatis untuk semua halaman yang memanggil file ini
 if (session_status() === PHP_SESSION_NONE) {
+    $forwardedProto = strtolower(trim(explode(',', $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')[0]));
+    $isHttps = (
+        (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
+        $forwardedProto === 'https'
+    );
 
     session_set_cookie_params([
         'lifetime' => 0,
         'path' => '/',
         'httponly' => true,
-        'secure' => !empty($_SERVER['HTTPS']),
+        'secure' => $isHttps,
         'samesite' => 'Strict'
     ]);
 
