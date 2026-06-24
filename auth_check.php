@@ -13,7 +13,7 @@ if(!isset($_SESSION['user_id'])) {
 
 // Membuat session timeout
 if (isset($_SESSION['last_activity']) && 
-    (time() - $_SESSION['last_activity'] > 1800)) {
+    (time() - $_SESSION['last_activity'] > 30)) {
     // Jika aktivitas terakhir lebih dari 30 menit, logout user  
     session_destroy();   
     header("Location: login.php?timeout=1");
