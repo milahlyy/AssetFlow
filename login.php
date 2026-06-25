@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 } else {
                     $_SESSION['login_attempts']++;
                     if ($_SESSION['login_attempts'] >= 5) {
-                        $_SESSION['lockout_time'] = time() + 300;
+                        $_SESSION['lockout_time'] = time() + 15;
                         $error = "Terlalu banyak percobaan login. Akun dikunci selama 5 menit.";
                     } else {
                         $sisa = 5 - $_SESSION['login_attempts'];
